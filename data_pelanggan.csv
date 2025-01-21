@@ -1,9 +1,11 @@
-ID Pelanggan,Nama Pelanggan,Alamat,No Telepon
-1,John Doe,Jalan Merdeka No. 45,08123456789
-2,Jane Smith,Jalan Raya No. 12,08234567890
-3,Michael Johnson,Jalan Sudirman No. 99,08345678901
-4,Lisa Brown,Jalan Mawar No. 23,08456789012
-5,David Wilson,Jalan Sejahtera No. 10,08567890123
-6,Susan Lee,Jalan Pahlawan No. 5,08678901234
-7,James White,Jalan Cempaka No. 3,08789012345
-8,Karen Miller,Jalan Melati No. 7,08890123456
+ID Pelanggan,Nama Pelanggan,Alamat,No Telepon,KTP Penyewa,Tanggal Lahir,Jenis Kelamin
+1,John Doe,Jalan Merdeka No. 45,08123456789,1234567890123456,1990-05-15,Laki-laki
+2,Jane Smith,Jalan Raya No. 12,08234567890,2345678901234567,1985-10-20,Perempuan
+3,Michael Johnson,Jalan Sudirman No. 99,08345678901,3456789012345678,1992-03-25,Laki-laki
+4,Lisa Brown,Jalan Mawar No. 23,08456789012,4567890123456789,1988-07-30,Perempuan
+5,David Wilson,Jalan Sejahtera No. 10,08567890123,5678901234567890,1995-12-12,Laki-laki
+6,Susan Lee,Jalan Pahlawan No. 5,08678901234,6789012345678901,1990-02-05,Perempuan
+7,James White,Jalan Cempaka No. 3,08789012345,7890123456789012,1982-11-14,Laki-laki
+8,Karen Miller,Jalan Melati No. 7,08890123456,8901234567890123,1993-09-08,Perempuan
+9,Andrew Clark,Jalan Raya No. 8,08901234567,9012345678901234,1996-01-02,Laki-laki
+10,Emily Davis,Jalan Bahagia No. 22,09012345678,0123456789012345,1987-06-16,Perempuan
