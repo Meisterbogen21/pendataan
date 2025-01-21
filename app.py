@@ -100,130 +100,36 @@ def daftar_pelanggan(nama_pelanggan, alamat, no_telepon, ktp_penyewa, tanggal_la
     
     st.success("Pelanggan berhasil didaftarkan!")
 
-# Fungsi untuk mengganti mobil penyewa
-def ganti_mobil(id_pelanggan, mobil_baru):
-    mobil_df = pd.read_csv('data_mobil.csv')
+# Fungsi untuk menyelesaikan pesanan dengan memilih penyewa
+def selesaikan_pesanan():
     pelanggan_df = pd.read_csv('data_pelanggan.csv')
-    
-    # Cek apakah mobil baru tersedia
-    mobil_terpilih = mobil_df[mobil_df['Nama Mobil'] == mobil_baru]
-    if mobil_terpilih.empty or mobil_terpilih['Status'].values[0] != 'Tersedia':
-        st.warning("Mobil yang dipilih sudah disewa atau tidak tersedia!")
-        return
-
-    # Cari pelanggan berdasarkan ID
-    pelanggan = pelanggan_df[pelanggan_df['ID Pelanggan'] == id_pelanggan]
-    if pelanggan.empty:
-        st.warning("Pelanggan tidak ditemukan!")
-        return
-
-    # Update data pelanggan dan mobil
-    old_mobil = pelanggan['Mobil Disewa'].values[0]
-    pelanggan_df.loc[pelanggan_df['ID Pelanggan'] == id_pelanggan, 'Mobil Disewa'] = mobil_baru
-
-    # Update status mobil lama menjadi 'Tersedia' dan mobil baru menjadi 'Tersewa'
-    mobil_df.loc[mobil_df['Nama Mobil'] == old_mobil, 'Status'] = 'Tersedia'
-    mobil_df.loc[mobil_df['Nama Mobil'] == mobil_baru, 'Status'] = 'Tersewa'
-
-    mobil_df.to_csv('data_mobil.csv', index=False)
-    pelanggan_df.to_csv('data_pelanggan.csv', index=False)
-
-    st.success(f"Mobil untuk {pelanggan['Nama Pelanggan'].values[0]} berhasil diganti menjadi {mobil_baru}!")
-
-# Fungsi untuk mencari data pelanggan berdasarkan nama
-def cari_pelanggan_by_name(nama_pelanggan):
-    pelanggan_df = pd.read_csv('data_pelanggan.csv')
-    result = pelanggan_df[pelanggan_df['Nama Pelanggan'].str.contains(nama_pelanggan, case=False, na=False)]
-    if not result.empty:
-        st.write(result)
-    else:
-        st.warning("Pelanggan tidak ditemukan!")
-
-# Fungsi untuk mencari data mobil berdasarkan nama
-def cari_mobil_by_name(nama_mobil):
     mobil_df = pd.read_csv('data_mobil.csv')
-    result = mobil_df[mobil_df['Nama Mobil'].str.contains(nama_mobil, case=False, na=False)]
-    if not result.empty:
-        st.write(result)
-    else:
-        st.warning("Mobil tidak ditemukan!")
 
-# Fungsi untuk menyelesaikan pesanan
-def selesaikan_pesanan(nama_pelanggan):
-    # Membaca data mobil dan pelanggan
-    mobil_df = pd.read_csv('data_mobil.csv')
-    pelanggan_df = pd.read_csv('data_pelanggan.csv')
+    nama_pelanggan_list = pelanggan_df['Nama Pelanggan'].tolist()
+    nama_pelanggan = st.selectbox("Pilih Nama Penyewa", nama_pelanggan_list)
 
-    # Mencari pelanggan berdasarkan nama
-    pelanggan = pelanggan_df[pelanggan_df['Nama Pelanggan'].str.contains(nama_pelanggan, case=False, na=False)]
+    if nama_pelanggan:
+        pelanggan = pelanggan_df[pelanggan_df['Nama Pelanggan'] == nama_pelanggan]
+        mobil_disewa = pelanggan['Mobil Disewa'].values[0]
+        tanggal_penyewaan = pd.to_datetime(pelanggan['Tanggal Penyewaan'].values[0])
+        tanggal_pengembalian = pd.to_datetime(pelanggan['Tanggal Pengembalian'].values[0])
+        deposit = pelanggan['Deposit'].values[0]
 
-    if not pelanggan.empty:
-        # Ambil data penyewa
-        pelanggan_data = pelanggan.iloc[0]
-        mobil_disewa = pelanggan_data['Mobil Disewa']
-        tanggal_penyewaan = pd.to_datetime(pelanggan_data['Tanggal Penyewaan'])
-        tanggal_pengembalian = pd.to_datetime(pelanggan_data['Tanggal Pengembalian'])
+        mobil_terpilih = mobil_df[mobil_df['Nama Mobil'] == mobil_disewa]
+        harga_sewa = mobil_terpilih['Harga Sewa'].values[0]
 
-        # Menghitung jumlah hari sewa
         jumlah_hari = (tanggal_pengembalian - tanggal_penyewaan).days
+        total_harga = (harga_sewa * jumlah_hari) - deposit
 
-        # Mencari mobil yang disewa
-        mobil = mobil_df[mobil_df['Nama Mobil'] == mobil_disewa]
+        st.write(f"**Mobil yang disewa:** {mobil_disewa}")
+        st.write(f"**Total Harga yang Harus Dibayar:** Rp{total_harga}")
 
-        if not mobil.empty:
-            # Ambil harga sewa per hari dan deposit
-            harga_sewa_per_hari = mobil['Harga Sewa'].values[0]
-            deposit = pelanggan_data['Deposit']
-
-            # Hitung total harga yang harus dibayar (harga sewa * jumlah hari - deposit)
-            total_harga = harga_sewa_per_hari * jumlah_hari
-            total_bayar = total_harga - deposit
-
-            # Menampilkan informasi
-            st.write(f"Nama Penyewa: {pelanggan_data['Nama Pelanggan']}")
-            st.write(f"Mobil yang Disewa: {mobil_disewa}")
-            st.write(f"Tanggal Penyewaan: {tanggal_penyewaan.strftime('%Y-%m-%d')}")
-            st.write(f"Tanggal Pengembalian: {tanggal_pengembalian.strftime('%Y-%m-%d')}")
-            st.write(f"Total Harga Sewa (tanpa deposit): Rp {total_harga}")
-            st.write(f"Deposit: Rp {deposit}")
-            st.write(f"Total yang Harus Dibayar: Rp {total_bayar}")
-
-            # Menghapus data pelanggan yang telah selesai
-            pelanggan_df = pelanggan_df[pelanggan_df['ID Pelanggan'] != pelanggan_data['ID Pelanggan']]
-            pelanggan_df.to_csv('data_pelanggan.csv', index=False)
+        if st.button("Selesaikan Pesanan"):
             mobil_df.loc[mobil_df['Nama Mobil'] == mobil_disewa, 'Status'] = 'Tersedia'
-
-            st.success(f"Pesanan untuk {pelanggan_data['Nama Pelanggan']} telah diselesaikan dan data pelanggan telah dihapus!")
-
-        else:
-            st.warning("Mobil yang disewa tidak ditemukan!")
-
-    else:
-        st.warning("Pelanggan tidak ditemukan!")
-    
-    # Hitung jumlah hari sewa
-    jumlah_hari = (tanggal_pengembalian - tanggal_penyewaan).days
-    if jumlah_hari <= 0:
-        st.warning("Tanggal pengembalian harus lebih besar dari tanggal penyewaan!")
-        return
-
-    # Hitung total harga dan deposit
-    total_harga = harga_sewa * jumlah_hari
-    deposit = total_harga * 0.1
-
-    # Tampilkan informasi kepada pengguna
-    st.write(f"Mobil yang disewa: {mobil_disewa}")
-    st.write(f"Jumlah Hari Sewa: {jumlah_hari} hari")
-    st.write(f"Total Harga: Rp{total_harga}")
-    st.write(f"Deposit: Rp{deposit}")
-
-    # Konfirmasi penyelesaian pesanan
-    if st.button("Selesaikan Pesanan"):
-        mobil_df.loc[mobil_df['Nama Mobil'] == mobil_disewa, 'Status'] = 'Tersedia'
-        pelanggan_df = pelanggan_df[pelanggan_df['ID Pelanggan'] != id_pelanggan]  # Hapus pelanggan dari daftar
-        mobil_df.to_csv('data_mobil.csv', index=False)
-        pelanggan_df.to_csv('data_pelanggan.csv', index=False)
-        st.success(f"Pesanan {nama_pelanggan} berhasil diselesaikan dan mobil telah dikembalikan!")
+            pelanggan_df = pelanggan_df[pelanggan_df['Nama Pelanggan'] != nama_pelanggan]
+            mobil_df.to_csv('data_mobil.csv', index=False)
+            pelanggan_df.to_csv('data_pelanggan.csv', index=False)
+            st.success(f"Pesanan atas nama {nama_pelanggan} berhasil diselesaikan!")
 
 # Menjalankan aplikasi Streamlit
 def main():
@@ -231,7 +137,7 @@ def main():
 
     st.title("Sistem Pendataan Sewa Mobil")
 
-    menu = ["Dashboard", "Daftar Mobil", "Daftar Pelanggan", "Tabel Mobil", "Tabel Pelanggan", "Ganti Mobil", "Selesaikan Pesanan", "Cari Mobil", "Cari Pelanggan"]
+    menu = ["Dashboard", "Daftar Mobil", "Daftar Pelanggan", "Tabel Mobil", "Tabel Pelanggan", "Selesaikan Pesanan"]
     choice = st.sidebar.selectbox("Pilih Menu", menu)
 
     if choice == "Dashboard":
@@ -240,7 +146,7 @@ def main():
     elif choice == "Daftar Mobil":
         st.subheader("Formulir Daftar Mobil")
         nama_mobil = st.text_input("Nama Mobil")
-        tipe_mobil = st.selectbox("Tipe Mobil", ["SUV", "MPV", "Sedan", "Hatchback", "Coupe", "Convertible"])
+        tipe_mobil = st.selectbox("Tipe Mobil", ["SUV", "MPV", "Sedan", "Hatchback", "Pickup"])
         harga_sewa = st.number_input("Harga Sewa", min_value=100000, step=1000)
         transmisi = st.selectbox("Transmisi", ["Manual", "Automatic"])
         jumlah_penumpang = st.number_input("Jumlah Penumpang", min_value=1)
@@ -258,7 +164,6 @@ def main():
         tanggal_lahir = st.date_input("Tanggal Lahir")
         jenis_kelamin = st.selectbox("Jenis Kelamin", ["Laki-laki", "Perempuan"])
         
-        # Pilih mobil yang tersedia
         mobil_df = pd.read_csv('data_mobil.csv')
         mobil_tersedia = mobil_df[mobil_df['Status'] == 'Tersedia']
         mobil_disewa = st.selectbox("Mobil Disewa", mobil_tersedia['Nama Mobil'])
@@ -275,33 +180,9 @@ def main():
     elif choice == "Tabel Pelanggan":
         tampilkan_data_pelanggan()
 
-    elif choice == "Ganti Mobil":
-        st.subheader("Ganti Mobil Penyewa")
-        id_pelanggan = st.number_input("ID Pelanggan", min_value=1)
-        mobil_baru = st.text_input("Mobil Baru")
-
-        if st.button("Ganti Mobil"):
-            ganti_mobil(id_pelanggan, mobil_baru)
-
     elif choice == "Selesaikan Pesanan":
         st.subheader("Selesaikan Pesanan")
-        nama_pelanggan = st.text_input("Masukkan Nama Penyewa")
-
-        if st.button("Selesaikan Pesanan"):
-            if nama_pelanggan:
-                selesaikan_pesanan(nama_pelanggan)
-            else:
-                st.warning("Nama penyewa harus diisi!")
-
-    elif choice == "Cari Mobil":
-        nama_mobil = st.text_input("Nama Mobil")
-        if st.button("Cari Mobil"):
-            cari_mobil_by_name(nama_mobil)
-
-    elif choice == "Cari Pelanggan":
-        nama_pelanggan = st.text_input("Nama Pelanggan")
-        if st.button("Cari Pelanggan"):
-            cari_pelanggan_by_name(nama_pelanggan)
+        selesaikan_pesanan()
 
 if __name__ == "__main__":
     main()
