@@ -11,8 +11,7 @@ def create_csv_if_not_exists():
             'Tipe Mobil': [],
             'Harga Sewa': [],
             'Transmisi': [],
-            'Jumlah Penumpang': [],
-            'Fitur Tambahan': []
+            'Jumlah Penumpang': []
         }
         mobil_df = pd.DataFrame(mobil_data)
         mobil_df.to_csv('data_mobil.csv', index=False)
@@ -25,7 +24,10 @@ def create_csv_if_not_exists():
             'No Telepon': [],
             'KTP Penyewa': [],
             'Tanggal Lahir': [],
-            'Jenis Kelamin': []
+            'Jenis Kelamin': [],
+            'Mobil Disewa': [],
+            'Tanggal Penyewaan': [],
+            'Tanggal Pengembalian': []
         }
         pelanggan_df = pd.DataFrame(pelanggan_data)
         pelanggan_df.to_csv('data_pelanggan.csv', index=False)
@@ -41,7 +43,7 @@ def tampilkan_data_pelanggan():
     st.write(pelanggan_df)
 
 # Fungsi untuk mendaftarkan mobil baru
-def daftar_mobil(nama_mobil, tipe_mobil, harga_sewa, transmisi, jumlah_penumpang, fitur_tambahan):
+def daftar_mobil(nama_mobil, tipe_mobil, harga_sewa, transmisi, jumlah_penumpang):
     mobil_df = pd.read_csv('data_mobil.csv')
     id_mobil = len(mobil_df) + 1
     new_data = {
@@ -50,8 +52,7 @@ def daftar_mobil(nama_mobil, tipe_mobil, harga_sewa, transmisi, jumlah_penumpang
         'Tipe Mobil': [tipe_mobil],
         'Harga Sewa': [harga_sewa],
         'Transmisi': [transmisi],
-        'Jumlah Penumpang': [jumlah_penumpang],
-        'Fitur Tambahan': [fitur_tambahan]
+        'Jumlah Penumpang': [jumlah_penumpang]
     }
     new_mobil_df = pd.DataFrame(new_data)
     mobil_df = pd.concat([mobil_df, new_mobil_df], ignore_index=True)
@@ -59,7 +60,7 @@ def daftar_mobil(nama_mobil, tipe_mobil, harga_sewa, transmisi, jumlah_penumpang
     st.success("Mobil berhasil didaftarkan!")
 
 # Fungsi untuk mendaftarkan pelanggan baru
-def daftar_pelanggan(nama_pelanggan, alamat, no_telepon, ktp_penyewa, tanggal_lahir, jenis_kelamin):
+def daftar_pelanggan(nama_pelanggan, alamat, no_telepon, ktp_penyewa, tanggal_lahir, jenis_kelamin, mobil_disewa, tanggal_penyewaan, tanggal_pengembalian):
     pelanggan_df = pd.read_csv('data_pelanggan.csv')
     id_pelanggan = len(pelanggan_df) + 1
     new_data = {
@@ -69,7 +70,10 @@ def daftar_pelanggan(nama_pelanggan, alamat, no_telepon, ktp_penyewa, tanggal_la
         'No Telepon': [no_telepon],
         'KTP Penyewa': [ktp_penyewa],
         'Tanggal Lahir': [tanggal_lahir],
-        'Jenis Kelamin': [jenis_kelamin]
+        'Jenis Kelamin': [jenis_kelamin],
+        'Mobil Disewa': [mobil_disewa],
+        'Tanggal Penyewaan': [tanggal_penyewaan],
+        'Tanggal Pengembalian': [tanggal_pengembalian]
     }
     new_pelanggan_df = pd.DataFrame(new_data)
     pelanggan_df = pd.concat([pelanggan_df, new_pelanggan_df], ignore_index=True)
@@ -126,10 +130,9 @@ def main():
         harga_sewa = st.number_input("Harga Sewa", min_value=100000, step=1000)
         transmisi = st.selectbox("Transmisi", ["Manual", "Automatic"])
         jumlah_penumpang = st.number_input("Jumlah Penumpang", min_value=1)
-        fitur_tambahan = st.text_area("Fitur Tambahan (Pisahkan dengan koma)")
 
         if st.button("Daftar Mobil"):
-            daftar_mobil(nama_mobil, tipe_mobil, harga_sewa, transmisi, jumlah_penumpang, fitur_tambahan)
+            daftar_mobil(nama_mobil, tipe_mobil, harga_sewa, transmisi, jumlah_penumpang)
 
     elif choice == "Daftar Pelanggan":
         st.subheader("Formulir Daftar Pelanggan")
@@ -139,9 +142,12 @@ def main():
         ktp_penyewa = st.text_input("KTP Penyewa")
         tanggal_lahir = st.date_input("Tanggal Lahir")
         jenis_kelamin = st.selectbox("Jenis Kelamin", ["Laki-laki", "Perempuan"])
+        mobil_disewa = st.selectbox("Mobil Disewa", ["Toyota Avanza", "Honda Civic", "Isuzu Panther", "Mitsubishi Pajero", "Daihatsu Xenia", "Suzuki Swift", "Nissan X-Trail", "Hyundai Elantra", "Ford Ranger", "Chevrolet Trax"])
+        tanggal_penyewaan = st.date_input("Tanggal Penyewaan")
+        tanggal_pengembalian = st.date_input("Tanggal Pengembalian")
 
         if st.button("Daftar Pelanggan"):
-            daftar_pelanggan(nama_pelanggan, alamat, no_telepon, ktp_penyewa, tanggal_lahir, jenis_kelamin)
+            daftar_pelanggan(nama_pelanggan, alamat, no_telepon, ktp_penyewa, tanggal_lahir, jenis_kelamin, mobil_disewa, tanggal_penyewaan, tanggal_pengembalian)
 
     elif choice == "Tabel Mobil":
         tampilkan_data_mobil()
