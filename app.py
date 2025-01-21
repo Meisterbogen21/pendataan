@@ -80,36 +80,36 @@ def daftar_pelanggan(nama_pelanggan, alamat, no_telepon, ktp_penyewa, tanggal_la
     pelanggan_df.to_csv('data_pelanggan.csv', index=False)
     st.success("Pelanggan berhasil didaftarkan!")
 
-# Fungsi untuk mencari data pelanggan
-def cari_pelanggan(id_pelanggan):
+# Fungsi untuk mencari data pelanggan berdasarkan nama
+def cari_pelanggan_by_name(nama_pelanggan):
     pelanggan_df = pd.read_csv('data_pelanggan.csv')
-    result = pelanggan_df[pelanggan_df['ID Pelanggan'] == id_pelanggan]
+    result = pelanggan_df[pelanggan_df['Nama Pelanggan'].str.contains(nama_pelanggan, case=False, na=False)]
     if not result.empty:
         st.write(result)
     else:
         st.warning("Pelanggan tidak ditemukan!")
 
-# Fungsi untuk mencari data mobil
-def cari_mobil(id_mobil):
+# Fungsi untuk mencari data mobil berdasarkan nama
+def cari_mobil_by_name(nama_mobil):
     mobil_df = pd.read_csv('data_mobil.csv')
-    result = mobil_df[mobil_df['ID Mobil'] == id_mobil]
+    result = mobil_df[mobil_df['Nama Mobil'].str.contains(nama_mobil, case=False, na=False)]
     if not result.empty:
         st.write(result)
     else:
         st.warning("Mobil tidak ditemukan!")
 
 # Fungsi untuk menyelesaikan pesanan
-def selesaikan_pesanan(id_pelanggan, id_mobil):
+def selesaikan_pesanan(id_pelanggan, nama_mobil):
     mobil_df = pd.read_csv('data_mobil.csv')
     pelanggan_df = pd.read_csv('data_pelanggan.csv')
 
-    mobil = mobil_df[mobil_df['ID Mobil'] == id_mobil]
+    mobil = mobil_df[mobil_df['Nama Mobil'] == nama_mobil]
     pelanggan = pelanggan_df[pelanggan_df['ID Pelanggan'] == id_pelanggan]
 
     if not mobil.empty and not pelanggan.empty:
         st.success(f"Pesanan untuk {pelanggan['Nama Pelanggan'].values[0]} telah diselesaikan! Mobil: {mobil['Nama Mobil'].values[0]}")
     else:
-        st.warning("Pesanan gagal! Pastikan ID pelanggan dan ID mobil valid.")
+        st.warning("Pesanan gagal! Pastikan ID pelanggan dan nama mobil valid.")
 
 # Menjalankan aplikasi Streamlit
 def main():
@@ -157,23 +157,28 @@ def main():
 
     elif choice == "Selesaikan Pesanan":
         st.subheader("Selesaikan Pesanan")
-        id_pelanggan = st.number_input("ID Pelanggan", min_value=1)
-        id_mobil = st.number_input("ID Mobil", min_value=1)
+        # Pilihan pelanggan dari daftar yang ada
+        pelanggan_df = pd.read_csv('data_pelanggan.csv')
+        pilihan_pelanggan = st.selectbox("Pilih Pelanggan", pelanggan_df['Nama Pelanggan'].unique())
+
+        # Pilihan mobil dari daftar yang disewa
+        pilihan_mobil = st.selectbox("Pilih Mobil", ["Toyota Avanza", "Honda Civic", "Isuzu Panther", "Mitsubishi Pajero", "Daihatsu Xenia", "Suzuki Swift", "Nissan X-Trail", "Hyundai Elantra", "Ford Ranger", "Chevrolet Trax"])
 
         if st.button("Selesaikan Pesanan"):
-            selesaikan_pesanan(id_pelanggan, id_mobil)
+            id_pelanggan = pelanggan_df[pelanggan_df['Nama Pelanggan'] == pilihan_pelanggan]['ID Pelanggan'].values[0]
+            selesaikan_pesanan(id_pelanggan, pilihan_mobil)
 
     elif choice == "Cari Mobil":
         st.subheader("Cari Mobil")
-        id_mobil = st.number_input("ID Mobil", min_value=1)
-        if st.button("Cari Mobil"):
-            cari_mobil(id_mobil)
+        nama_mobil = st.text_input("Cari Nama Mobil")
+        if nama_mobil:
+            cari_mobil_by_name(nama_mobil)
 
     elif choice == "Cari Pelanggan":
         st.subheader("Cari Pelanggan")
-        id_pelanggan = st.number_input("ID Pelanggan", min_value=1)
-        if st.button("Cari Pelanggan"):
-            cari_pelanggan(id_pelanggan)
+        nama_pelanggan = st.text_input("Cari Nama Pelanggan")
+        if nama_pelanggan:
+            cari_pelanggan_by_name(nama_pelanggan)
 
 if __name__ == "__main__":
     main()
