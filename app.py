@@ -1,5 +1,5 @@
-import streamlit as st
 import pandas as pd
+import streamlit as st
 import os
 
 # Membuat file CSV untuk dataset jika belum ada
@@ -11,7 +11,8 @@ def create_csv_if_not_exists():
             'Tipe Mobil': [],
             'Harga Sewa': [],
             'Transmisi': [],
-            'Jumlah Penumpang': []
+            'Jumlah Penumpang': [],
+            'Status Mobil': []
         }
         mobil_df = pd.DataFrame(mobil_data)
         mobil_df.to_csv('data_mobil.csv', index=False)
@@ -52,7 +53,8 @@ def daftar_mobil(nama_mobil, tipe_mobil, harga_sewa, transmisi, jumlah_penumpang
         'Tipe Mobil': [tipe_mobil],
         'Harga Sewa': [harga_sewa],
         'Transmisi': [transmisi],
-        'Jumlah Penumpang': [jumlah_penumpang]
+        'Jumlah Penumpang': [jumlah_penumpang],
+        'Status Mobil': ['Tersedia']
     }
     new_mobil_df = pd.DataFrame(new_data)
     mobil_df = pd.concat([mobil_df, new_mobil_df], ignore_index=True)
@@ -111,13 +113,28 @@ def selesaikan_pesanan(id_pelanggan, nama_mobil):
     else:
         st.warning("Pesanan gagal! Pastikan ID pelanggan dan nama mobil valid.")
 
+# Fungsi untuk mengganti mobil penyewa
+def ganti_mobil_penyewa(id_pelanggan, mobil_pengganti):
+    pelanggan_df = pd.read_csv('data_pelanggan.csv')
+    
+    # Mencari data pelanggan berdasarkan ID
+    pelanggan = pelanggan_df[pelanggan_df['ID Pelanggan'] == id_pelanggan]
+    
+    if not pelanggan.empty:
+        # Mengupdate mobil yang disewa dengan mobil pengganti
+        pelanggan_df.loc[pelanggan_df['ID Pelanggan'] == id_pelanggan, 'Mobil Disewa'] = mobil_pengganti
+        pelanggan_df.to_csv('data_pelanggan.csv', index=False)
+        st.success(f"Mobil penyewa dengan ID {id_pelanggan} telah diganti dengan mobil: {mobil_pengganti}")
+    else:
+        st.warning("Pelanggan tidak ditemukan!")
+
 # Menjalankan aplikasi Streamlit
 def main():
     create_csv_if_not_exists()
 
     st.title("Sistem Pendataan Sewa Mobil")
 
-    menu = ["Dashboard", "Daftar Mobil", "Daftar Pelanggan", "Tabel Mobil", "Tabel Pelanggan", "Selesaikan Pesanan", "Cari Mobil", "Cari Pelanggan"]
+    menu = ["Dashboard", "Daftar Mobil", "Daftar Pelanggan", "Tabel Mobil", "Tabel Pelanggan", "Selesaikan Pesanan", "Cari Mobil", "Cari Pelanggan", "Ganti Mobil Penyewa"]
     choice = st.sidebar.selectbox("Pilih Menu", menu)
 
     if choice == "Dashboard":
@@ -170,15 +187,29 @@ def main():
 
     elif choice == "Cari Mobil":
         st.subheader("Cari Mobil")
-        nama_mobil = st.text_input("Cari Nama Mobil")
-        if nama_mobil:
+        nama_mobil = st.text_input("Nama Mobil")
+        if st.button("Cari Mobil"):
             cari_mobil_by_name(nama_mobil)
 
     elif choice == "Cari Pelanggan":
         st.subheader("Cari Pelanggan")
-        nama_pelanggan = st.text_input("Cari Nama Pelanggan")
-        if nama_pelanggan:
+        nama_pelanggan = st.text_input("Nama Pelanggan")
+        if st.button("Cari Pelanggan"):
             cari_pelanggan_by_name(nama_pelanggan)
+
+    elif choice == "Ganti Mobil Penyewa":
+        st.subheader("Ganti Mobil Penyewa")
+        # Pilihan pelanggan dari daftar yang ada
+        pelanggan_df = pd.read_csv('data_pelanggan.csv')
+        pilihan_pelanggan = st.selectbox("Pilih Pelanggan", pelanggan_df['Nama Pelanggan'].unique())
+
+        # Pilihan mobil pengganti dari daftar mobil yang tersedia
+        mobil_df = pd.read_csv('data_mobil.csv')
+        pilihan_mobil_pengganti = st.selectbox("Pilih Mobil Pengganti", mobil_df['Nama Mobil'].unique())
+
+        if st.button("Ganti Mobil"):
+            id_pelanggan = pelanggan_df[pelanggan_df['Nama Pelanggan'] == pilihan_pelanggan]['ID Pelanggan'].values[0]
+            ganti_mobil_penyewa(id_pelanggan, pilihan_mobil_pengganti)
 
 if __name__ == "__main__":
     main()
