@@ -214,17 +214,15 @@ def main():
     elif choice == "Tabel Pelanggan":
         tampilkan_data_pelanggan()
 
-    elif choice == "Ganti Mobil":
+    elif choice == "Ganti Mobil Penyewa":
         st.subheader("Ganti Mobil Penyewa")
         pelanggan_df = pd.read_csv('data_pelanggan.csv')
-        mobil_df = pd.read_csv('data_mobil.csv')
-
-        id_pelanggan = st.number_input("Masukkan ID Pelanggan", min_value=1, step=1)
-        mobil_tersedia = mobil_df[mobil_df['Status'] == 'Tersedia']['Nama Mobil']
-        mobil_baru = st.selectbox("Pilih Mobil Baru", mobil_tersedia)
+        pilihan_pelanggan = st.selectbox("Pilih Pelanggan", pelanggan_df['Nama Pelanggan'].unique())
+        pilihan_mobil_baru = st.selectbox("Pilih Mobil Pengganti", ["Toyota Avanza", "Honda Civic", "Isuzu Panther", "Mitsubishi Pajero", "Daihatsu Xenia", "Suzuki Swift", "Nissan X-Trail", "Hyundai Elantra", "Ford Ranger", "Chevrolet Trax"])
 
         if st.button("Ganti Mobil"):
-            ganti_mobil(id_pelanggan, mobil_baru)
+            id_pelanggan = pelanggan_df[pelanggan_df['Nama Pelanggan'] == pilihan_pelanggan]['ID Pelanggan'].values[0]
+            ganti_mobil_penyewa(id_pelanggan, pilihan_mobil_baru)
 
     elif choice == "Selesaikan Pesanan":
         st.subheader("Selesaikan Pesanan")
