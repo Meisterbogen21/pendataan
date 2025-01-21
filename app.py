@@ -19,7 +19,7 @@ penyewa_data = load_data(penyewa_url)
 st.title("Sistem Pendataan Sewa Mobil")
 
 menu = st.sidebar.selectbox("Pilih Menu", [
-    "Daftarkan Pelanggan",
+    "Daftarkan Penyewa",
     "Daftarkan Mobil Baru",
     "Tampilkan Tabel Mobil",
     "Tampilkan Tabel Pelanggan",
@@ -28,24 +28,34 @@ menu = st.sidebar.selectbox("Pilih Menu", [
     "Cari Data Mobil"
 ])
 
-if menu == "Daftarkan Pelanggan":
-    st.header("Daftarkan Pelanggan Baru")
-    id_pelanggan = st.text_input("ID Pelanggan")
-    nama = st.text_input("Nama Pelanggan")
+if menu == "Daftarkan Penyewa":
+    st.header("Daftarkan Penyewa Baru")
+    id_pelanggan = st.text_input("ID Penyewa")
+    nama = st.text_input("Nama Penyewa")
     alamat = st.text_input("Alamat")
     no_telepon = st.text_input("No Telepon")
     email = st.text_input("Email")
 
-    if st.button("Simpan Pelanggan"):
-        new_pelanggan = pd.DataFrame({
-            'ID_Pelanggan': [id_pelanggan],
+    st.subheader("Pilih Mobil yang Akan Disewa")
+    mobil_terpilih = st.selectbox("Pilih Mobil", mobil_data["Merk"] + " - " + mobil_data["Model"] + " (" + mobil_data["Plat_Nomor"] + ")")
+
+    st.subheader("Pilih Tanggal Penyewaan")
+    tanggal_mulai = st.date_input("Tanggal Mulai")
+    tanggal_selesai = st.date_input("Tanggal Selesai")
+
+    if st.button("Simpan Penyewa"):
+        new_penyewa = pd.DataFrame({
+            'ID_Penyewa': [id_pelanggan],
             'Nama': [nama],
             'Alamat': [alamat],
             'No_Telepon': [no_telepon],
-            'Email': [email]
+            'Email': [email],
+            'Mobil': [mobil_terpilih],
+            'Tanggal_Mulai': [tanggal_mulai],
+            'Tanggal_Selesai': [tanggal_selesai]
         })
-        penyewa_data = pd.concat([penyewa_data, new_pelanggan], ignore_index=True)
-        st.success("Pelanggan berhasil ditambahkan!")
+        penyewa_data = pd.concat([penyewa_data, new_penyewa], ignore_index=True)
+        st.success("Penyewa berhasil ditambahkan!")
 
 if menu == "Daftarkan Mobil Baru":
     st.header("Daftarkan Mobil Baru")
