@@ -111,7 +111,6 @@ def selesaikan_pesanan(id_pelanggan, nama_mobil):
     else:
         st.warning("Pesanan gagal! Pastikan ID pelanggan dan nama mobil valid.")
 
-
 # Menjalankan aplikasi Streamlit
 def main():
     create_csv_if_not_exists()
@@ -119,7 +118,7 @@ def main():
     st.title("Sistem Pendataan Sewa Mobil")
 
     menu = ["Dashboard", "Daftar Mobil", "Daftar Pelanggan", "Tabel Mobil", "Tabel Pelanggan", "Selesaikan Pesanan", "Cari Mobil", "Cari Pelanggan"]
-
+    choice = st.sidebar.selectbox("Pilih Menu", menu)
 
     if choice == "Dashboard":
         st.subheader("Selamat datang di sistem pendataan sewa mobil")
@@ -180,7 +179,6 @@ def main():
         nama_pelanggan = st.text_input("Cari Nama Pelanggan")
         if nama_pelanggan:
             cari_pelanggan_by_name(nama_pelanggan)
-
 
 if __name__ == "__main__":
     main()
