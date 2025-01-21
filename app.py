@@ -101,38 +101,34 @@ def daftar_pelanggan(nama_pelanggan, alamat, no_telepon, ktp_penyewa, tanggal_la
     st.success("Pelanggan berhasil didaftarkan!")
 
 # Fungsi untuk mengganti mobil penyewa
-def ganti_mobil():
-    pelanggan_df = pd.read_csv('data_pelanggan.csv')
+def ganti_mobil(id_pelanggan, mobil_baru):
     mobil_df = pd.read_csv('data_mobil.csv')
+    pelanggan_df = pd.read_csv('data_pelanggan.csv')
+    
+    # Cek apakah mobil baru tersedia
+    mobil_terpilih = mobil_df[mobil_df['Nama Mobil'] == mobil_baru]
+    if mobil_terpilih.empty or mobil_terpilih['Status'].values[0] != 'Tersedia':
+        st.warning("Mobil yang dipilih sudah disewa atau tidak tersedia!")
+        return
 
-    # Pilih pelanggan berdasarkan nama
-    nama_pelanggan_list = pelanggan_df['Nama Pelanggan'].tolist()
-    nama_pelanggan = st.selectbox("Pilih Nama Penyewa", nama_pelanggan_list)
+    # Cari pelanggan berdasarkan ID
+    pelanggan = pelanggan_df[pelanggan_df['ID Pelanggan'] == id_pelanggan]
+    if pelanggan.empty:
+        st.warning("Pelanggan tidak ditemukan!")
+        return
 
-    if nama_pelanggan:
-        pelanggan = pelanggan_df[pelanggan_df['Nama Pelanggan'] == nama_pelanggan]
-        mobil_saat_ini = pelanggan['Mobil Disewa'].values[0]
-        
-        st.write(f"**Mobil Saat Ini yang Disewa:** {mobil_saat_ini}")
-        
-        # Pilih mobil pengganti dari mobil yang tersedia
-        mobil_tersedia = mobil_df[mobil_df['Status'] == 'Tersedia']['Nama Mobil'].tolist()
-        mobil_baru = st.selectbox("Pilih Mobil Pengganti", mobil_tersedia)
+    # Update data pelanggan dan mobil
+    old_mobil = pelanggan['Mobil Disewa'].values[0]
+    pelanggan_df.loc[pelanggan_df['ID Pelanggan'] == id_pelanggan, 'Mobil Disewa'] = mobil_baru
 
-        if st.button("Ganti Mobil"):
-            # Update data pelanggan dan mobil
-            old_mobil = mobil_saat_ini
-            pelanggan_df.loc[pelanggan_df['Nama Pelanggan'] == nama_pelanggan, 'Mobil Disewa'] = mobil_baru
+    # Update status mobil lama menjadi 'Tersedia' dan mobil baru menjadi 'Tersewa'
+    mobil_df.loc[mobil_df['Nama Mobil'] == old_mobil, 'Status'] = 'Tersedia'
+    mobil_df.loc[mobil_df['Nama Mobil'] == mobil_baru, 'Status'] = 'Tersewa'
 
-            # Update status mobil lama menjadi 'Tersedia' dan mobil baru menjadi 'Tersewa'
-            mobil_df.loc[mobil_df['Nama Mobil'] == old_mobil, 'Status'] = 'Tersedia'
-            mobil_df.loc[mobil_df['Nama Mobil'] == mobil_baru, 'Status'] = 'Tersewa'
+    mobil_df.to_csv('data_mobil.csv', index=False)
+    pelanggan_df.to_csv('data_pelanggan.csv', index=False)
 
-            # Simpan kembali ke file
-            mobil_df.to_csv('data_mobil.csv', index=False)
-            pelanggan_df.to_csv('data_pelanggan.csv', index=False)
-
-            st.success(f"Mobil untuk {nama_pelanggan} berhasil diganti dari {old_mobil} menjadi {mobil_baru}!")
+    st.success(f"Mobil untuk {pelanggan['Nama Pelanggan'].values[0]} berhasil diganti menjadi {mobil_baru}!")
 
 # Fungsi untuk menyelesaikan pesanan dengan memilih penyewa
 def selesaikan_pesanan():
@@ -215,15 +211,16 @@ def main():
         tampilkan_data_pelanggan()
 
     elif choice == "Ganti Mobil":
-        st.subheader("Ganti Mobil")
+        st.subheader("Ganti Mobil Penyewa")
         pelanggan_df = pd.read_csv('data_pelanggan.csv')
-        pilihan_pelanggan = st.selectbox("Pilih Pelanggan", pelanggan_df['Nama Pelanggan'].unique())
+        mobil_df = pd.read_csv('data_mobil.csv')
+
+        id_pelanggan = st.number_input("Masukkan ID Pelanggan", min_value=1, step=1)
         mobil_tersedia = mobil_df[mobil_df['Status'] == 'Tersedia']['Nama Mobil']
         mobil_baru = st.selectbox("Pilih Mobil Baru", mobil_tersedia)
 
         if st.button("Ganti Mobil"):
-            id_pelanggan = pelanggan_df[pelanggan_df['Nama Pelanggan'] == pilihan_pelanggan]['ID Pelanggan'].values[0]
-            ganti_mobil_penyewa(id_pelanggan, pilihan_mobil_baru)
+            ganti_mobil(id_pelanggan, mobil_baru)
 
     elif choice == "Selesaikan Pesanan":
         st.subheader("Selesaikan Pesanan")
