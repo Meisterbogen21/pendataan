@@ -11,7 +11,8 @@ def create_csv_if_not_exists():
             'Tipe Mobil': [],
             'Harga Sewa': [],
             'Transmisi': [],
-            'Jumlah Penumpang': []
+            'Jumlah Penumpang': [],
+            'Plat Nomor': []  # Menambahkan kolom Plat Nomor
         }
         mobil_df = pd.DataFrame(mobil_data)
         mobil_df.to_csv('data_mobil.csv', index=False)
@@ -27,11 +28,12 @@ def create_csv_if_not_exists():
             'Jenis Kelamin': [],
             'Mobil Disewa': [],
             'Tanggal Penyewaan': [],
-            'Tanggal Pengembalian': []
+            'Tanggal Pengembalian': [],
+            'Deposit': []  # Menambahkan kolom Deposit
         }
         pelanggan_df = pd.DataFrame(pelanggan_data)
         pelanggan_df.to_csv('data_pelanggan.csv', index=False)
-        
+
 # Fungsi untuk menampilkan data mobil
 def tampilkan_data_mobil():
     mobil_df = pd.read_csv('data_mobil.csv')
@@ -43,7 +45,7 @@ def tampilkan_data_pelanggan():
     st.write(pelanggan_df)
 
 # Fungsi untuk mendaftarkan mobil baru
-def daftar_mobil(nama_mobil, tipe_mobil, harga_sewa, transmisi, jumlah_penumpang):
+def daftar_mobil(nama_mobil, tipe_mobil, harga_sewa, transmisi, jumlah_penumpang, plat_nomor):
     mobil_df = pd.read_csv('data_mobil.csv')
     id_mobil = len(mobil_df) + 1
     new_data = {
@@ -52,7 +54,8 @@ def daftar_mobil(nama_mobil, tipe_mobil, harga_sewa, transmisi, jumlah_penumpang
         'Tipe Mobil': [tipe_mobil],
         'Harga Sewa': [harga_sewa],
         'Transmisi': [transmisi],
-        'Jumlah Penumpang': [jumlah_penumpang]
+        'Jumlah Penumpang': [jumlah_penumpang],
+        'Plat Nomor': [plat_nomor]  # Menambahkan Plat Nomor
     }
     new_mobil_df = pd.DataFrame(new_data)
     mobil_df = pd.concat([mobil_df, new_mobil_df], ignore_index=True)
@@ -61,11 +64,19 @@ def daftar_mobil(nama_mobil, tipe_mobil, harga_sewa, transmisi, jumlah_penumpang
 
 # Fungsi untuk mendaftarkan pelanggan baru
 def daftar_pelanggan(nama_pelanggan, alamat, no_telepon, ktp_penyewa, tanggal_lahir, jenis_kelamin, mobil_disewa, tanggal_penyewaan, tanggal_pengembalian):
+    mobil_df = pd.read_csv('data_mobil.csv')
     pelanggan_df = pd.read_csv('data_pelanggan.csv')
-    id_pelanggan = len(pelanggan_df) + 1
+    
     # Menghapus koma dari nomor telepon dan nomor KTP
     no_telepon = no_telepon.replace(',', '')
     ktp_penyewa = ktp_penyewa.replace(',', '')
+    
+    id_pelanggan = len(pelanggan_df) + 1
+    # Menghitung deposit
+    harga_sewa_perhari = mobil_df[mobil_df['Nama Mobil'] == mobil_disewa]['Harga Sewa'].values[0]
+    durasi_sewa = (tanggal_pengembalian - tanggal_penyewaan).days
+    total_harga = harga_sewa_perhari * durasi_sewa
+    deposit = total_harga * 0.10
     
     new_data = {
         'ID Pelanggan': [id_pelanggan],
@@ -77,7 +88,8 @@ def daftar_pelanggan(nama_pelanggan, alamat, no_telepon, ktp_penyewa, tanggal_la
         'Jenis Kelamin': [jenis_kelamin],
         'Mobil Disewa': [mobil_disewa],
         'Tanggal Penyewaan': [tanggal_penyewaan],
-        'Tanggal Pengembalian': [tanggal_pengembalian]
+        'Tanggal Pengembalian': [tanggal_pengembalian],
+        'Deposit': [deposit]  # Menambahkan Deposit
     }
     new_pelanggan_df = pd.DataFrame(new_data)
     pelanggan_df = pd.concat([pelanggan_df, new_pelanggan_df], ignore_index=True)
@@ -151,9 +163,10 @@ def main():
         harga_sewa = st.number_input("Harga Sewa", min_value=100000, step=1000)
         transmisi = st.selectbox("Transmisi", ["Manual", "Automatic"])
         jumlah_penumpang = st.number_input("Jumlah Penumpang", min_value=1)
+        plat_nomor = st.text_input("Plat Nomor")
 
         if st.button("Daftar Mobil"):
-            daftar_mobil(nama_mobil, tipe_mobil, harga_sewa, transmisi, jumlah_penumpang)
+            daftar_mobil(nama_mobil, tipe_mobil, harga_sewa, transmisi, jumlah_penumpang, plat_nomor)
 
     elif choice == "Daftar Pelanggan":
         st.subheader("Formulir Daftar Pelanggan")
@@ -163,7 +176,7 @@ def main():
         ktp_penyewa = st.text_input("KTP Penyewa")
         tanggal_lahir = st.date_input("Tanggal Lahir")
         jenis_kelamin = st.selectbox("Jenis Kelamin", ["Laki-laki", "Perempuan"])
-        mobil_disewa = st.selectbox("Mobil Disewa", ["Toyota Avanza", "Honda Civic", "Isuzu Panther", "Mitsubishi Pajero", "Daihatsu Xenia", "Suzuki Swift", "Nissan X-Trail", "Hyundai Elantra", "Ford Ranger", "Chevrolet Trax"])
+        mobil_disewa = st.selectbox("Mobil yang Disewa", ["Toyota Avanza", "Honda Civic", "Isuzu Panther", "Mitsubishi Pajero", "Daihatsu Xenia", "Suzuki Swift", "Nissan X-Trail", "Hyundai Elantra", "Ford Ranger", "Chevrolet Trax"])
         tanggal_penyewaan = st.date_input("Tanggal Penyewaan")
         tanggal_pengembalian = st.date_input("Tanggal Pengembalian")
 
@@ -171,18 +184,18 @@ def main():
             daftar_pelanggan(nama_pelanggan, alamat, no_telepon, ktp_penyewa, tanggal_lahir, jenis_kelamin, mobil_disewa, tanggal_penyewaan, tanggal_pengembalian)
 
     elif choice == "Tabel Mobil":
+        st.subheader("Data Mobil")
         tampilkan_data_mobil()
 
     elif choice == "Tabel Pelanggan":
+        st.subheader("Data Pelanggan")
         tampilkan_data_pelanggan()
 
     elif choice == "Selesaikan Pesanan":
         st.subheader("Selesaikan Pesanan")
-        # Pilihan pelanggan dari daftar yang ada
         pelanggan_df = pd.read_csv('data_pelanggan.csv')
         pilihan_pelanggan = st.selectbox("Pilih Pelanggan", pelanggan_df['Nama Pelanggan'].unique())
 
-        # Pilihan mobil dari daftar yang disewa
         pilihan_mobil = st.selectbox("Pilih Mobil", ["Toyota Avanza", "Honda Civic", "Isuzu Panther", "Mitsubishi Pajero", "Daihatsu Xenia", "Suzuki Swift", "Nissan X-Trail", "Hyundai Elantra", "Ford Ranger", "Chevrolet Trax"])
 
         if st.button("Selesaikan Pesanan"):
