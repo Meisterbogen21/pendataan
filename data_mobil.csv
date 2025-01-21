@@ -9,3 +9,13 @@ ID Mobil,Nama Mobil,Tipe Mobil,Harga Sewa,Transmisi,Jumlah Penumpang
 8,Hyundai Elantra,Sedan,450000,Automatic,5
 9,Ford Ranger,Pickup,800000,Manual,4
 10,Chevrolet Trax,SUV,550000,Automatic,5
+11,Hyundai Santa Fe,SUV,750000,Automatic,7
+12,Toyota Fortuner,SUV,900000,Automatic,7
+13,Honda CR-V,SUV,650000,Automatic,5
+14,Toyota Camry,Sedan,700000,Automatic,5
+15,Audi Q7,SUV,1200000,Automatic,7
+16,BMW X5,SUV,1100000,Automatic,5
+17,Mercedes-Benz GLC,SUV,1050000,Automatic,5
+18,Volkswagen Tiguan,SUV,850000,Automatic,5
+19,Peugeot 3008,SUV,850000,Automatic,5
+20,Ford Mustang,Sports,1500000,Automatic,2
