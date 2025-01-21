@@ -140,41 +140,81 @@ def cari_pelanggan_by_name(nama_pelanggan):
     else:
         st.warning("Pelanggan tidak ditemukan!")
 
-# Menjalankan aplikasi Streamlit
+# Fungsi untuk mendaftarkan mobil
+def daftar_mobil(nama_mobil, tipe_mobil, harga_sewa, transmisi, jumlah_penumpang, plat_nomor):
+    mobil_df = pd.read_csv('data_mobil.csv')
+    
+    # Menambahkan data mobil ke dataset
+    new_id = len(mobil_df) + 1
+    new_mobil = pd.DataFrame({
+        'ID Mobil': [new_id],
+        'Nama Mobil': [nama_mobil],
+        'Tipe Mobil': [tipe_mobil],
+        'Harga Sewa': [harga_sewa],
+        'Transmisi': [transmisi],
+        'Jumlah Penumpang': [jumlah_penumpang],
+        'Plat Nomor': [plat_nomor],
+        'Status': ['Tersedia']  # Mobil yang baru ditambahkan otomatis tersedia
+    })
+    
+    mobil_df = pd.concat([mobil_df, new_mobil], ignore_index=True)
+    mobil_df.to_csv('data_mobil.csv', index=False)
+    st.success(f"Mobil {nama_mobil} berhasil didaftarkan!")
+
+# Fungsi untuk mendaftarkan pelanggan
+def daftar_pelanggan(nama_pelanggan, alamat, no_telepon, ktp_penyewa, tanggal_lahir, jenis_kelamin, mobil_disewa, tanggal_penyewaan, tanggal_pengembalian):
+    mobil_df = pd.read_csv('data_mobil.csv')
+    pelanggan_df = pd.read_csv('data_pelanggan.csv')
+
+    # Cek jika mobil sudah disewa
+    mobil = mobil_df[mobil_df['Nama Mobil'] == mobil_disewa]
+
+    if not mobil.empty and mobil['Status'].values[0] == 'Tersedia':
+        # Menambahkan data pelanggan ke dataset
+        new_id = len(pelanggan_df) + 1
+        total_hari = (tanggal_pengembalian - tanggal_penyewaan).days
+        harga_sewa_per_hari = mobil['Harga Sewa'].values[0]
+        deposit = harga_sewa_per_hari * total_hari * 0.1  # Deposit 10% dari total harga
+
+        new_pelanggan = pd.DataFrame({
+            'ID Pelanggan': [new_id],
+            'Nama Pelanggan': [nama_pelanggan],
+            'Alamat': [alamat],
+            'No Telepon': [no_telepon],
+            'KTP Penyewa': [ktp_penyewa],
+            'Tanggal Lahir': [tanggal_lahir],
+            'Jenis Kelamin': [jenis_kelamin],
+            'Mobil Disewa': [mobil_disewa],
+            'Tanggal Penyewaan': [tanggal_penyewaan],
+            'Tanggal Pengembalian': [tanggal_pengembalian],
+            'Deposit': [deposit]
+        })
+
+        pelanggan_df = pd.concat([pelanggan_df, new_pelanggan], ignore_index=True)
+        pelanggan_df.to_csv('data_pelanggan.csv', index=False)
+
+        # Set mobil menjadi tersewa
+        mobil_df.loc[mobil_df['Nama Mobil'] == mobil_disewa, 'Status'] = 'Tersewa'
+        mobil_df.to_csv('data_mobil.csv', index=False)
+
+        st.success(f"Pelanggan {nama_pelanggan} berhasil didaftarkan!")
+    else:
+        st.warning("Mobil yang dipilih sudah disewa atau tidak tersedia!")
+
+# Tampilan antarmuka Streamlit
 def main():
     create_csv_if_not_exists()
 
-    st.title("Sistem Pendataan Sewa Mobil")
+    st.title("Sistem Penyewaan Mobil")
 
-    menu = ["Dashboard", "Daftar Mobil", "Daftar Pelanggan", "Tabel Mobil", "Tabel Pelanggan", "Selesaikan Pesanan", "Cari Mobil", "Cari Pelanggan", "Ganti Mobil Penyewa"]
+    menu = ["Tabel Mobil", "Tabel Pelanggan", "Daftar Mobil", "Daftar Pelanggan", "Cari Mobil", "Cari Pelanggan", "Selesaikan Pesanan", "Ganti Mobil Penyewa"]
     choice = st.sidebar.selectbox("Pilih Menu", menu)
 
-    if choice == "Dashboard":
-        st.subheader("Selamat datang di sistem pendataan sewa mobil")
-
-    elif choice == "Selesaikan Pesanan":
-        st.subheader("Selesaikan Pesanan")
-        nama_pelanggan = st.text_input("Masukkan Nama Penyewa")
-
-        if st.button("Selesaikan Pesanan"):
-            if nama_pelanggan:
-                selesaikan_pesanan(nama_pelanggan)
-            else:
-                st.warning("Nama penyewa harus diisi!")
-
-    elif choice == "Ganti Mobil Penyewa":
-        st.subheader("Ganti Mobil Penyewa")
-        id_pelanggan = st.number_input("Masukkan ID Pelanggan", min_value=1)
-        mobil_baru = st.selectbox("Pilih Mobil Baru", ["Toyota Avanza", "Honda Civic", "Isuzu Panther", "Mitsubishi Pajero", "Daihatsu Xenia", "Suzuki Swift", "Nissan X-Trail", "Hyundai Elantra", "Ford Ranger", "Chevrolet Trax"])
-
-        if st.button("Ganti Mobil"):
-            ganti_mobil_penyewa(id_pelanggan, mobil_baru)
-
-    elif choice == "Daftar Mobil":
-        st.subheader("Formulir Daftar Mobil")
+    if choice == "Daftar Mobil":
+        st.subheader("Daftar Mobil")
         nama_mobil = st.text_input("Nama Mobil")
-        tipe_mobil = st.text_input("Tipe Mobil")
-        harga_sewa = st.number_input("Harga Sewa", min_value=100000, step=1000)
+        tipe_mobil = st.selectbox("Tipe Mobil", ["MPV", "Sedan", "SUV", "Hatchback", "Pickup", "4x4", "Sports"])
+        harga_sewa = st.number_input("Harga Sewa per Hari", min_value=0)
         transmisi = st.selectbox("Transmisi", ["Manual", "Automatic"])
         jumlah_penumpang = st.number_input("Jumlah Penumpang", min_value=1)
         plat_nomor = st.text_input("Plat Nomor")
@@ -183,14 +223,14 @@ def main():
             daftar_mobil(nama_mobil, tipe_mobil, harga_sewa, transmisi, jumlah_penumpang, plat_nomor)
 
     elif choice == "Daftar Pelanggan":
-        st.subheader("Formulir Daftar Pelanggan")
+        st.subheader("Daftar Pelanggan")
         nama_pelanggan = st.text_input("Nama Pelanggan")
-        alamat = st.text_area("Alamat")
+        alamat = st.text_input("Alamat")
         no_telepon = st.text_input("No Telepon")
         ktp_penyewa = st.text_input("KTP Penyewa")
         tanggal_lahir = st.date_input("Tanggal Lahir")
         jenis_kelamin = st.selectbox("Jenis Kelamin", ["Laki-laki", "Perempuan"])
-        mobil_disewa = st.selectbox("Mobil Disewa", ["Toyota Avanza", "Honda Civic", "Isuzu Panther", "Mitsubishi Pajero", "Daihatsu Xenia", "Suzuki Swift", "Nissan X-Trail", "Hyundai Elantra", "Ford Ranger", "Chevrolet Trax"])
+        mobil_disewa = st.selectbox("Mobil yang Disewa", ["Toyota Avanza", "Honda Civic", "Isuzu Panther", "Mitsubishi Pajero", "Daihatsu Xenia", "Suzuki Swift", "Nissan X-Trail", "Hyundai Elantra", "Ford Ranger", "Chevrolet Trax"])
         tanggal_penyewaan = st.date_input("Tanggal Penyewaan")
         tanggal_pengembalian = st.date_input("Tanggal Pengembalian")
 
@@ -216,6 +256,20 @@ def main():
         nama_pelanggan = st.text_input("Cari Nama Pelanggan")
         if nama_pelanggan:
             cari_pelanggan_by_name(nama_pelanggan)
+
+    elif choice == "Selesaikan Pesanan":
+        st.subheader("Selesaikan Pesanan")
+        nama_pelanggan = st.text_input("Nama Penyewa")
+        if st.button("Selesaikan Pesanan"):
+            selesaikan_pesanan(nama_pelanggan)
+
+    elif choice == "Ganti Mobil Penyewa":
+        st.subheader("Ganti Mobil Penyewa")
+        id_pelanggan = st.number_input("ID Pelanggan", min_value=1)
+        mobil_baru = st.selectbox("Pilih Mobil Baru", ["Toyota Avanza", "Honda Civic", "Isuzu Panther", "Mitsubishi Pajero", "Daihatsu Xenia", "Suzuki Swift", "Nissan X-Trail", "Hyundai Elantra", "Ford Ranger", "Chevrolet Trax"])
+
+        if st.button("Ganti Mobil"):
+            ganti_mobil_penyewa(id_pelanggan, mobil_baru)
 
 if __name__ == "__main__":
     main()
