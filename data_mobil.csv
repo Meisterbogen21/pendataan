@@ -1,21 +1,21 @@
-ID Mobil,Nama Mobil,Tipe Mobil,Harga Sewa,Transmisi,Jumlah Penumpang
-1,Toyota Avanza,MPV,300000,Manual,7
-2,Honda Civic,Sedan,500000,Automatic,5
-3,Isuzu Panther,MPV,350000,Manual,7
-4,Mitsubishi Pajero,4x4,700000,Automatic,7
-5,Daihatsu Xenia,MPV,320000,Manual,7
-6,Suzuki Swift,Hatchback,250000,Manual,5
-7,Nissan X-Trail,SUV,600000,Automatic,5
-8,Hyundai Elantra,Sedan,450000,Automatic,5
-9,Ford Ranger,Pickup,800000,Manual,4
-10,Chevrolet Trax,SUV,550000,Automatic,5
-11,Hyundai Santa Fe,SUV,750000,Automatic,7
-12,Toyota Fortuner,SUV,900000,Automatic,7
-13,Honda CR-V,SUV,650000,Automatic,5
-14,Toyota Camry,Sedan,700000,Automatic,5
-15,Audi Q7,SUV,1200000,Automatic,7
-16,BMW X5,SUV,1100000,Automatic,5
-17,Mercedes-Benz GLC,SUV,1050000,Automatic,5
-18,Volkswagen Tiguan,SUV,850000,Automatic,5
-19,Peugeot 3008,SUV,850000,Automatic,5
-20,Ford Mustang,Sports,1500000,Automatic,2
+ID Mobil,Nama Mobil,Tipe Mobil,Harga Sewa,Transmisi,Jumlah Penumpang,Plat Nomor
+1,Toyota Avanza,MPV,300000,Manual,7,B 1234 XYZ
+2,Honda Civic,Sedan,500000,Automatic,5,B 5678 ABC
+3,Isuzu Panther,MPV,350000,Manual,7,B 1357 DEF
+4,Mitsubishi Pajero,4x4,700000,Automatic,7,B 2468 GHI
+5,Daihatsu Xenia,MPV,320000,Manual,7,B 3690 JKL
+6,Suzuki Swift,Hatchback,250000,Manual,5,B 1111 MNO
+7,Nissan X-Trail,SUV,600000,Automatic,5,B 2222 PQR
+8,Hyundai Elantra,Sedan,450000,Automatic,5,B 3333 STU
+9,Ford Ranger,Pickup,800000,Manual,4,B 4444 VWX
+10,Chevrolet Trax,SUV,550000,Automatic,5,B 5555 YZA
+11,Hyundai Santa Fe,SUV,750000,Automatic,7,B 6666 BCD
+12,Toyota Fortuner,SUV,900000,Automatic,7,B 7777 EFG
+13,Honda CR-V,SUV,650000,Automatic,5,B 8888 HIJ
+14,Toyota Camry,Sedan,700000,Automatic,5,B 9999 KLM
+15,Audi Q7,SUV,1200000,Automatic,7,B 1000 NOP
+16,BMW X5,SUV,1100000,Automatic,5,B 2000 QRS
+17,Mercedes-Benz GLC,SUV,1050000,Automatic,5,B 3000 TUV
+18,Volkswagen Tiguan,SUV,850000,Automatic,5,B 4000 WXY
+19,Peugeot 3008,SUV,850000,Automatic,5,B 5000 ZAB
+20,Ford Mustang,Sports,1500000,Automatic,2,B 6000 CDE
