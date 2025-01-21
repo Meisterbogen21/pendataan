@@ -203,9 +203,9 @@ def main():
         mobil_df = pd.read_csv('data_mobil.csv')
         pilihan_mobil_pengganti = st.selectbox("Pilih Mobil Pengganti", mobil_df['Nama Mobil'].unique())
 
-    if st.button("Ganti Mobil"):
-        id_pelanggan = pelanggan_df[pelanggan_df['Nama Pelanggan'] == pilihan_pelanggan]['ID Pelanggan'].values[0]
-        ganti_mobil_penyewa(id_pelanggan, pilihan_mobil_pengganti)
+        if st.button("Ganti Mobil"):
+            id_pelanggan = pelanggan_df[pelanggan_df['Nama Pelanggan'] == pilihan_pelanggan]['ID Pelanggan'].values[0]
+            ganti_mobil_penyewa(id_pelanggan, pilihan_mobil_pengganti)
 
 if __name__ == "__main__":
     main()
