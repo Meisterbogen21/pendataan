@@ -15,6 +15,10 @@ def load_data(url):
 mobil_data = load_data(mobil_url)
 penyewa_data = load_data(penyewa_url)
 
+# Pastikan dataset memiliki kolom 'Status'
+if 'Status' not in mobil_data.columns:
+    mobil_data['Status'] = 'Tersedia'  # Set status default ke 'Tersedia'
+
 # Initialize Streamlit app
 st.title("Sistem Pendataan Sewa Mobil")
 
