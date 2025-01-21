@@ -1,114 +1,155 @@
 import streamlit as st
 import pandas as pd
-import requests
+import os
 
-# Load dataset from GitHub URLs
-mobil_url = "https://raw.githubusercontent.com/Meisterbogen21/python8/refs/heads/main/mobil_data_spesifik.csv"
-penyewa_url = "https://raw.githubusercontent.com/Meisterbogen21/python8/refs/heads/main/penyewa_data_spesifik.csv"
+# Membuat file CSV untuk dataset jika belum ada
+def create_csv_if_not_exists():
+    if not os.path.exists('data_mobil.csv'):
+        mobil_data = {
+            'ID Mobil': [],
+            'Nama Mobil': [],
+            'Tipe Mobil': [],
+            'Harga Sewa': []
+        }
+        mobil_df = pd.DataFrame(mobil_data)
+        mobil_df.to_csv('data_mobil.csv', index=False)
 
-@st.cache_data
-def load_data(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    return pd.read_csv(url)
+    if not os.path.exists('data_pelanggan.csv'):
+        pelanggan_data = {
+            'ID Pelanggan': [],
+            'Nama Pelanggan': [],
+            'Alamat': [],
+            'No Telepon': []
+        }
+        pelanggan_df = pd.DataFrame(pelanggan_data)
+        pelanggan_df.to_csv('data_pelanggan.csv', index=False)
 
-mobil_data = load_data(mobil_url)
-penyewa_data = load_data(penyewa_url)
+# Fungsi untuk menampilkan data mobil
+def tampilkan_data_mobil():
+    mobil_df = pd.read_csv('data_mobil.csv')
+    st.write(mobil_df)
 
-# Initialize Streamlit app
-st.title("Sistem Pendataan Sewa Mobil")
+# Fungsi untuk menampilkan data pelanggan
+def tampilkan_data_pelanggan():
+    pelanggan_df = pd.read_csv('data_pelanggan.csv')
+    st.write(pelanggan_df)
 
-menu = st.sidebar.selectbox("Pilih Menu", [
-    "Daftarkan Penyewa",
-    "Daftarkan Mobil Baru",
-    "Tampilkan Tabel Mobil",
-    "Tampilkan Tabel Pelanggan",
-    "Selesaikan Pesanan",
-    "Cari Data Pelanggan",
-    "Cari Data Mobil"
-])
+# Fungsi untuk mendaftarkan mobil baru
+def daftar_mobil(nama_mobil, tipe_mobil, harga_sewa):
+    mobil_df = pd.read_csv('data_mobil.csv')
+    id_mobil = len(mobil_df) + 1
+    new_data = {
+        'ID Mobil': [id_mobil],
+        'Nama Mobil': [nama_mobil],
+        'Tipe Mobil': [tipe_mobil],
+        'Harga Sewa': [harga_sewa]
+    }
+    new_mobil_df = pd.DataFrame(new_data)
+    mobil_df = pd.concat([mobil_df, new_mobil_df], ignore_index=True)
+    mobil_df.to_csv('data_mobil.csv', index=False)
+    st.success("Mobil berhasil didaftarkan!")
 
-if menu == "Daftarkan Penyewa":
-  
-    st.header("Daftarkan Penyewa Baru")
-    nama = st.text_input("Nama Penyewa")
-    alamat = st.text_input("Alamat")
-    no_telepon = st.text_input("No Telepon")
-    email = st.text_input("Email")
-    pilihan_mobil = st.selectbox("Pilih Mobil", mobil_data['nama_mobil'] + " - " + mobil_data['transmisi'] + " - " + mobil_data['tipe_mobil'])
-    tanggal_mulai = st.date_input("Tanggal Mulai Penyewaan")
-    tanggal_selesai = st.date_input("Tanggal Selesai Penyewaan")
+# Fungsi untuk mendaftarkan pelanggan baru
+def daftar_pelanggan(nama_pelanggan, alamat, no_telepon):
+    pelanggan_df = pd.read_csv('data_pelanggan.csv')
+    id_pelanggan = len(pelanggan_df) + 1
+    new_data = {
+        'ID Pelanggan': [id_pelanggan],
+        'Nama Pelanggan': [nama_pelanggan],
+        'Alamat': [alamat],
+        'No Telepon': [no_telepon]
+    }
+    new_pelanggan_df = pd.DataFrame(new_data)
+    pelanggan_df = pd.concat([pelanggan_df, new_pelanggan_df], ignore_index=True)
+    pelanggan_df.to_csv('data_pelanggan.csv', index=False)
+    st.success("Pelanggan berhasil didaftarkan!")
 
-    if st.button("Simpan Penyewaan"):
-        selected_mobil_id = pilihan_mobil.split(" - ")[0]
+# Fungsi untuk mencari data pelanggan
+def cari_pelanggan(id_pelanggan):
+    pelanggan_df = pd.read_csv('data_pelanggan.csv')
+    result = pelanggan_df[pelanggan_df['ID Pelanggan'] == id_pelanggan]
+    if not result.empty:
+        st.write(result)
+    else:
+        st.warning("Pelanggan tidak ditemukan!")
 
-        # Tambahkan data penyewa baru
-        new_penyewa = pd.DataFrame({
-            'Nama': [nama],
-            'Alamat': [alamat],
-            'No_Telepon': [no_telepon],
-            'Email': [email],
-            'ID_Mobil': [selected_mobil_id],
-            'Tanggal_Mulai': [tanggal_mulai],
-            'Tanggal_Selesai': [tanggal_selesai]
-        })
-        
-        penyewa_data = pd.concat([penyewa_data, new_penyewa], ignore_index=True)
+# Fungsi untuk mencari data mobil
+def cari_mobil(id_mobil):
+    mobil_df = pd.read_csv('data_mobil.csv')
+    result = mobil_df[mobil_df['ID Mobil'] == id_mobil]
+    if not result.empty:
+        st.write(result)
+    else:
+        st.warning("Mobil tidak ditemukan!")
 
-        st.success("Penyewaan berhasil ditambahkan!")
-     
-        
-if menu == "Daftarkan Mobil Baru":
-    st.header("Daftarkan Mobil Baru")
-    id_mobil = st.text_input("ID Mobil")
-    merk = st.text_input("Merk Mobil")
-    model = st.text_input("Model Mobil")
-    tahun = st.number_input("Tahun", min_value=1900, max_value=2100, step=1)
-    plat_nomor = st.text_input("Plat Nomor")
-    harga_sewa = st.number_input("Harga Sewa per Hari", min_value=0, step=1)
-    status = st.selectbox("Status Mobil", ["Tersedia", "Disewa"])
+# Fungsi untuk menyelesaikan pesanan
+def selesaikan_pesanan(id_pelanggan, id_mobil):
+    mobil_df = pd.read_csv('data_mobil.csv')
+    pelanggan_df = pd.read_csv('data_pelanggan.csv')
 
-    if st.button("Simpan Mobil"):
-        new_mobil = pd.DataFrame({
-            'ID_Mobil': [id_mobil],
-            'Merk': [merk],
-            'Model': [model],
-            'Tahun': [tahun],
-            'Plat_Nomor': [plat_nomor],
-            'Harga_Sewa': [harga_sewa],
-            'Status': [status]
-        })
-        
-        mobil_data = pd.concat([mobil_data, new_mobil], ignore_index=True)
-        st.success("Mobil berhasil ditambahkan!")
+    mobil = mobil_df[mobil_df['ID Mobil'] == id_mobil]
+    pelanggan = pelanggan_df[pelanggan_df['ID Pelanggan'] == id_pelanggan]
 
-if menu == "Tampilkan Tabel Mobil":
-    st.header("Tabel Mobil")
-    st.write(mobil_data)
+    if not mobil.empty and not pelanggan.empty:
+        st.success(f"Pesanan untuk {pelanggan['Nama Pelanggan'].values[0]} telah diselesaikan! Mobil: {mobil['Nama Mobil'].values[0]}")
+    else:
+        st.warning("Pesanan gagal! Pastikan ID pelanggan dan ID mobil valid.")
 
-if menu == "Tampilkan Tabel Pelanggan":
-    st.header("Tabel Pelanggan")
-    st.write(penyewa_data)
+# Menjalankan aplikasi Streamlit
+def main():
+    create_csv_if_not_exists()
 
-if menu == "Selesaikan Pesanan":
-    st.header("Selesaikan Pesanan")
-    pesanan_id = st.text_input("Masukkan ID Pesanan")
+    st.title("Sistem Pendataan Sewa Mobil")
 
-    if st.button("Selesaikan Pesanan"):
-        st.success(f"Pesanan dengan ID {pesanan_id} telah diselesaikan.")
+    menu = ["Dashboard", "Daftar Mobil", "Daftar Pelanggan", "Tabel Mobil", "Tabel Pelanggan", "Selesaikan Pesanan", "Cari Mobil", "Cari Pelanggan"]
+    choice = st.sidebar.selectbox("Pilih Menu", menu)
 
-if menu == "Cari Data Pelanggan":
-    st.header("Cari Data Pelanggan")
-    keyword = st.text_input("Masukkan Nama atau No Telepon")
+    if choice == "Dashboard":
+        st.subheader("Selamat datang di sistem pendataan sewa mobil")
 
-    if st.button("Cari"):
-        hasil = penyewa_data[penyewa_data.apply(lambda row: keyword.lower() in row.astype(str).str.lower().to_string(), axis=1)]
-        st.write(hasil)
+    elif choice == "Daftar Mobil":
+        st.subheader("Formulir Daftar Mobil")
+        nama_mobil = st.text_input("Nama Mobil")
+        tipe_mobil = st.text_input("Tipe Mobil")
+        harga_sewa = st.number_input("Harga Sewa", min_value=100000, step=1000)
 
-if menu == "Cari Data Mobil":
-    st.header("Cari Data Mobil")
-    keyword = st.text_input("Masukkan Merk, Model, atau Plat Nomor")
+        if st.button("Daftar Mobil"):
+            daftar_mobil(nama_mobil, tipe_mobil, harga_sewa)
 
-    if st.button("Cari"):
-        hasil = mobil_data[mobil_data.apply(lambda row: keyword.lower() in row.astype(str).str.lower().to_string(), axis=1)]
-        st.write(hasil)
+    elif choice == "Daftar Pelanggan":
+        st.subheader("Formulir Daftar Pelanggan")
+        nama_pelanggan = st.text_input("Nama Pelanggan")
+        alamat = st.text_area("Alamat")
+        no_telepon = st.text_input("No Telepon")
+
+        if st.button("Daftar Pelanggan"):
+            daftar_pelanggan(nama_pelanggan, alamat, no_telepon)
+
+    elif choice == "Tabel Mobil":
+        tampilkan_data_mobil()
+
+    elif choice == "Tabel Pelanggan":
+        tampilkan_data_pelanggan()
+
+    elif choice == "Selesaikan Pesanan":
+        st.subheader("Selesaikan Pesanan")
+        id_pelanggan = st.number_input("ID Pelanggan", min_value=1)
+        id_mobil = st.number_input("ID Mobil", min_value=1)
+
+        if st.button("Selesaikan Pesanan"):
+            selesaikan_pesanan(id_pelanggan, id_mobil)
+
+    elif choice == "Cari Mobil":
+        st.subheader("Cari Mobil")
+        id_mobil = st.number_input("ID Mobil", min_value=1)
+        if st.button("Cari Mobil"):
+            cari_mobil(id_mobil)
+
+    elif choice == "Cari Pelanggan":
+        st.subheader("Cari Pelanggan")
+        id_pelanggan = st.number_input("ID Pelanggan", min_value=1)
+        if st.button("Cari Pelanggan"):
+            cari_pelanggan(id_pelanggan)
+
+if __name__ == "__main__":
+    main()
