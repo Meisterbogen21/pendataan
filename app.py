@@ -110,27 +110,15 @@ def selesaikan_pesanan(id_pelanggan, nama_mobil):
         st.success(f"Pesanan untuk {pelanggan['Nama Pelanggan'].values[0]} telah diselesaikan! Mobil: {mobil['Nama Mobil'].values[0]}")
     else:
         st.warning("Pesanan gagal! Pastikan ID pelanggan dan nama mobil valid.")
-# Fungsi untuk mengganti mobil penyewa
-def ganti_mobil_penyewa(id_pelanggan, mobil_pengganti):
-    pelanggan_df = pd.read_csv('data_pelanggan.csv')
-    
-    # Mencari data pelanggan berdasarkan ID
-    pelanggan = pelanggan_df[pelanggan_df['ID Pelanggan'] == id_pelanggan]
-    
-    if not pelanggan.empty:
-        # Mengupdate mobil yang disewa dengan mobil pengganti
-        pelanggan_df.loc[pelanggan_df['ID Pelanggan'] == id_pelanggan, 'Mobil Disewa'] = mobil_pengganti
-        pelanggan_df.to_csv('data_pelanggan.csv', index=False)
-        st.success(f"Mobil penyewa dengan ID {id_pelanggan} telah diganti dengan mobil: {mobil_pengganti}")
-    else:
-        st.warning("Pelanggan tidak ditemukan!")
+
+
 # Menjalankan aplikasi Streamlit
 def main():
     create_csv_if_not_exists()
 
     st.title("Sistem Pendataan Sewa Mobil")
 
-    menu = ["Dashboard", "Daftar Mobil", "Daftar Pelanggan", "Tabel Mobil", "Tabel Pelanggan", "Selesaikan Pesanan", "Cari Mobil", "Cari Pelanggan", "Ganti Mobil Penyewa"]
+    menu = ["Dashboard", "Daftar Mobil", "Daftar Pelanggan", "Tabel Mobil", "Tabel Pelanggan", "Selesaikan Pesanan", "Cari Mobil", "Cari Pelanggan"]
 
 
     if choice == "Dashboard":
@@ -193,16 +181,6 @@ def main():
         if nama_pelanggan:
             cari_pelanggan_by_name(nama_pelanggan)
 
-    elif choice == "Ganti Mobil Penyewa":
-        st.subheader("Ganti Mobil Penyewa")
-        # Pilihan pelanggan dari daftar yang ada
-        pelanggan_df = pd.read_csv('data_pelanggan.csv')
-        pilihan_pelanggan = st.selectbox("Pilih Pelanggan", pelanggan_df['Nama Pelanggan'].unique())
-        mobil_df = pd.read_csv('data_mobil.csv')
-        pilihan_mobil_pengganti = st.selectbox("Pilih Mobil Pengganti", mobil_df['Nama Mobil'].unique())
-        if st.button("Ganti Mobil"):
-            id_pelanggan = pelanggan_df[pelanggan_df['Nama Pelanggan'] == pilihan_pelanggan]['ID Pelanggan'].values[0]
-            ganti_mobil_penyewa(id_pelanggan, pilihan_mobil_pengganti)
 
 if __name__ == "__main__":
     main()
