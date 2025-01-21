@@ -146,7 +146,7 @@ def main():
 
     st.title("Sistem Pendataan Sewa Mobil")
 
-    menu = ["Dashboard", "Selesaikan Pesanan", "Daftar Mobil", "Daftar Pelanggan", "Tabel Mobil", "Tabel Pelanggan", "Cari Mobil", "Cari Pelanggan", "Ganti Mobil Penyewa"]
+    menu = ["Dashboard", "Daftar Mobil", "Daftar Pelanggan", "Tabel Mobil", "Tabel Pelanggan", "Selesaikan Pesanan", "Cari Mobil", "Cari Pelanggan", "Ganti Mobil Penyewa"]
     choice = st.sidebar.selectbox("Pilih Menu", menu)
 
     if choice == "Dashboard":
