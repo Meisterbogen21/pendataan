@@ -100,6 +100,36 @@ def daftar_pelanggan(nama_pelanggan, alamat, no_telepon, ktp_penyewa, tanggal_la
     
     st.success("Pelanggan berhasil didaftarkan!")
 
+# Fungsi untuk mengganti mobil penyewa
+def ganti_mobil(id_pelanggan, mobil_baru):
+    mobil_df = pd.read_csv('data_mobil.csv')
+    pelanggan_df = pd.read_csv('data_pelanggan.csv')
+    
+    # Cek apakah mobil baru tersedia
+    mobil_terpilih = mobil_df[mobil_df['Nama Mobil'] == mobil_baru]
+    if mobil_terpilih.empty or mobil_terpilih['Status'].values[0] != 'Tersedia':
+        st.warning("Mobil yang dipilih sudah disewa atau tidak tersedia!")
+        return
+
+    # Cari pelanggan berdasarkan ID
+    pelanggan = pelanggan_df[pelanggan_df['ID Pelanggan'] == id_pelanggan]
+    if pelanggan.empty:
+        st.warning("Pelanggan tidak ditemukan!")
+        return
+
+    # Update data pelanggan dan mobil
+    old_mobil = pelanggan['Mobil Disewa'].values[0]
+    pelanggan_df.loc[pelanggan_df['ID Pelanggan'] == id_pelanggan, 'Mobil Disewa'] = mobil_baru
+
+    # Update status mobil lama menjadi 'Tersedia' dan mobil baru menjadi 'Tersewa'
+    mobil_df.loc[mobil_df['Nama Mobil'] == old_mobil, 'Status'] = 'Tersedia'
+    mobil_df.loc[mobil_df['Nama Mobil'] == mobil_baru, 'Status'] = 'Tersewa'
+
+    mobil_df.to_csv('data_mobil.csv', index=False)
+    pelanggan_df.to_csv('data_pelanggan.csv', index=False)
+
+    st.success(f"Mobil untuk {pelanggan['Nama Pelanggan'].values[0]} berhasil diganti menjadi {mobil_baru}!")
+
 # Fungsi untuk menyelesaikan pesanan dengan memilih penyewa
 def selesaikan_pesanan():
     pelanggan_df = pd.read_csv('data_pelanggan.csv')
@@ -137,7 +167,7 @@ def main():
 
     st.title("Sistem Pendataan Sewa Mobil")
 
-    menu = ["Dashboard", "Daftar Mobil", "Daftar Pelanggan", "Tabel Mobil", "Tabel Pelanggan", "Selesaikan Pesanan"]
+    menu = ["Dashboard", "Daftar Mobil", "Daftar Pelanggan", "Tabel Mobil", "Tabel Pelanggan", "Ganti Mobil", "Selesaikan Pesanan"]
     choice = st.sidebar.selectbox("Pilih Menu", menu)
 
     if choice == "Dashboard":
@@ -179,6 +209,18 @@ def main():
 
     elif choice == "Tabel Pelanggan":
         tampilkan_data_pelanggan()
+
+    elif choice == "Ganti Mobil":
+        st.subheader("Ganti Mobil Penyewa")
+        pelanggan_df = pd.read_csv('data_pelanggan.csv')
+        mobil_df = pd.read_csv('data_mobil.csv')
+
+        id_pelanggan = st.number_input("Masukkan ID Pelanggan", min_value=1, step=1)
+        mobil_tersedia = mobil_df[mobil_df['Status'] == 'Tersedia']['Nama Mobil']
+        mobil_baru = st.selectbox("Pilih Mobil Baru", mobil_tersedia)
+
+        if st.button("Ganti Mobil"):
+            ganti_mobil(id_pelanggan, mobil_baru)
 
     elif choice == "Selesaikan Pesanan":
         st.subheader("Selesaikan Pesanan")
