@@ -218,7 +218,8 @@ def main():
         st.subheader("Ganti Mobil")
         pelanggan_df = pd.read_csv('data_pelanggan.csv')
         pilihan_pelanggan = st.selectbox("Pilih Pelanggan", pelanggan_df['Nama Pelanggan'].unique())
-        pilihan_mobil_baru = st.selectbox("Pilih Mobil Pengganti", ["Toyota Avanza", "Honda Civic", "Isuzu Panther", "Mitsubishi Pajero", "Daihatsu Xenia", "Suzuki Swift", "Nissan X-Trail", "Hyundai Elantra", "Ford Ranger", "Chevrolet Trax"])
+        mobil_tersedia = mobil_df[mobil_df['Status'] == 'Tersedia']['Nama Mobil']
+        mobil_baru = st.selectbox("Pilih Mobil Baru", mobil_tersedia)
 
         if st.button("Ganti Mobil"):
             id_pelanggan = pelanggan_df[pelanggan_df['Nama Pelanggan'] == pilihan_pelanggan]['ID Pelanggan'].values[0]
