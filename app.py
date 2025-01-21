@@ -6,7 +6,7 @@ import requests
 mobil_url = "https://raw.githubusercontent.com/Meisterbogen21/python8/refs/heads/main/mobil_data_spesifik.csv"
 penyewa_url = "https://raw.githubusercontent.com/Meisterbogen21/python8/refs/heads/main/penyewa_data_spesifik.csv"
 
-@st.cache
+@st.cache_data
 def load_data(url):
     response = requests.get(url)
     response.raise_for_status()
@@ -30,6 +30,7 @@ menu = st.sidebar.selectbox("Pilih Menu", [
 
 if menu == "Daftarkan Pelanggan":
     st.header("Daftarkan Pelanggan Baru")
+    id_pelanggan = st.text_input("ID Pelanggan")
     nama = st.text_input("Nama Pelanggan")
     alamat = st.text_input("Alamat")
     no_telepon = st.text_input("No Telepon")
@@ -37,9 +38,10 @@ if menu == "Daftarkan Pelanggan":
 
     if st.button("Simpan Pelanggan"):
         new_pelanggan = pd.DataFrame({
+            'ID_Pelanggan': [id_pelanggan],
             'Nama': [nama],
             'Alamat': [alamat],
-            'No Telepon': [no_telepon],
+            'No_Telepon': [no_telepon],
             'Email': [email]
         })
         penyewa_data = pd.concat([penyewa_data, new_pelanggan], ignore_index=True)
@@ -47,17 +49,21 @@ if menu == "Daftarkan Pelanggan":
 
 if menu == "Daftarkan Mobil Baru":
     st.header("Daftarkan Mobil Baru")
+    id_mobil = st.text_input("ID Mobil")
     merk = st.text_input("Merk Mobil")
     model = st.text_input("Model Mobil")
+    tahun = st.number_input("Tahun", min_value=1900, max_value=2100, step=1)
     plat_nomor = st.text_input("Plat Nomor")
     harga_sewa = st.number_input("Harga Sewa per Hari", min_value=0, step=1)
 
     if st.button("Simpan Mobil"):
         new_mobil = pd.DataFrame({
+            'ID_Mobil': [id_mobil],
             'Merk': [merk],
             'Model': [model],
-            'Plat Nomor': [plat_nomor],
-            'Harga Sewa': [harga_sewa]
+            'Tahun': [tahun],
+            'Plat_Nomor': [plat_nomor],
+            'Harga_Sewa': [harga_sewa]
         })
         mobil_data = pd.concat([mobil_data, new_mobil], ignore_index=True)
         st.success("Mobil berhasil ditambahkan!")
