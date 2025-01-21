@@ -29,23 +29,12 @@ menu = st.sidebar.selectbox("Pilih Menu", [
 ])
 
 if menu == "Daftarkan Penyewa":
-    new_penyewa = pd.DataFrame({
-                'ID_Penyewa': [id_pelanggan],
-                'Nama': [nama],
-                'Alamat': [alamat],
-                'No_Telepon': [no_telepon],
-                'Email': [email],
-                'ID_Mobil': [selected_mobil_id],
-                'Tanggal_Mulai': [tanggal_mulai],
-                'Tanggal_Selesai': [tanggal_selesai]
-            })
-            penyewa_data = pd.concat([penyewa_data, new_penyewa], ignore_index=True)
-
-            # Update status mobil menjadi "Disewa"
-            mobil_data.loc[mobil_data['ID_Mobil'] == selected_mobil_id, 'Status'] = 'Disewa'
-
-            st.success("Penyewa berhasil ditambahkan dan mobil diperbarui menjadi status 'Disewa'!")
+  
     st.header("Daftarkan Penyewa Baru")
+    nama = st.text_input("Nama Penyewa")
+    alamat = st.text_input("Alamat")
+    no_telepon = st.text_input("No Telepon")
+    email = st.text_input("Email")
     pilihan_mobil = st.selectbox("Pilih Mobil", mobil_data['nama_mobil'] + " - " + mobil_data['merek_mobil'] + " " + mobil_data['transmisi'])
     tanggal_mulai = st.date_input("Tanggal Mulai Penyewaan")
     tanggal_selesai = st.date_input("Tanggal Selesai Penyewaan")
