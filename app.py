@@ -44,7 +44,7 @@ if menu == "Daftarkan Penyewa":
 
         # Tambahkan data penyewa baru
         new_penyewa = pd.DataFrame({
-            'Nama': [nama_penyewa],
+            'Nama': [nama],
             'Alamat': [alamat],
             'No_Telepon': [no_telepon],
             'Email': [email],
