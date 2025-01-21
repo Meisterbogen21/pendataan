@@ -30,7 +30,7 @@ menu = st.sidebar.selectbox("Pilih Menu", [
 
 if menu == "Daftarkan Penyewa":
     st.header("Daftarkan Penyewa Baru")
-    pilihan_mobil = st.selectbox("Pilih Mobil", mobil_data['ID_Mobil'] + " - " + mobil_data['Merk'] + " " + mobil_data['Model'])
+    pilihan_mobil = st.selectbox("Pilih Mobil", mobil_data['nama_mobil'] + " - " + mobil_data['merek_mobil'] + " " + mobil_data['transmisi'])
     tanggal_mulai = st.date_input("Tanggal Mulai Penyewaan")
     tanggal_selesai = st.date_input("Tanggal Selesai Penyewaan")
 
