@@ -132,13 +132,31 @@ def ganti_mobil(nama_pelanggan):
 
         st.success(f"Mobil untuk {nama_pelanggan} berhasil diganti menjadi {mobil_baru}!")
 
+# Fungsi untuk mencari pelanggan
+def cari_pelanggan(nama_pelanggan):
+    pelanggan_df = pd.read_csv('data_pelanggan.csv')
+    pelanggan = pelanggan_df[pelanggan_df['Nama Pelanggan'].str.contains(nama_pelanggan, case=False, na=False)]
+    if pelanggan.empty:
+        st.warning("Pelanggan tidak ditemukan!")
+    else:
+        st.write(pelanggan)
+
+# Fungsi untuk mencari mobil
+def cari_mobil(nama_mobil):
+    mobil_df = pd.read_csv('data_mobil.csv')
+    mobil = mobil_df[mobil_df['Nama Mobil'].str.contains(nama_mobil, case=False, na=False)]
+    if mobil.empty:
+        st.warning("Mobil tidak ditemukan!")
+    else:
+        st.write(mobil)
+
 # Menjalankan aplikasi Streamlit
 def main():
     create_csv_if_not_exists()
 
     st.title("Sistem Pendataan Sewa Mobil")
 
-    menu = ["Dashboard", "Daftar Mobil", "Daftar Pelanggan", "Tabel Mobil", "Tabel Pelanggan", "Ganti Mobil"]
+    menu = ["Dashboard", "Daftar Mobil", "Daftar Pelanggan", "Tabel Mobil", "Tabel Pelanggan", "Ganti Mobil", "Cari Pelanggan", "Cari Mobil"]
     choice = st.sidebar.selectbox("Pilih Menu", menu)
 
     if choice == "Dashboard":
@@ -168,7 +186,7 @@ def main():
         # Pilih mobil yang tersedia
         mobil_df = pd.read_csv('data_mobil.csv')
         mobil_tersedia = mobil_df[mobil_df['Status'] == 'Tersedia']
-        mobil_disewa = st.selectbox("Mobil Disewa", mobil_tersedia['Nama Mobil'])
+        mobil_disewa = st.selectbox("Pilih Mobil yang Disewa", mobil_tersedia['Nama Mobil'])
 
         tanggal_penyewaan = st.date_input("Tanggal Penyewaan")
         tanggal_pengembalian = st.date_input("Tanggal Pengembalian")
@@ -187,6 +205,18 @@ def main():
         nama_pelanggan = st.text_input("Nama Penyewa")
         if st.button("Cari Penyewa"):
             ganti_mobil(nama_pelanggan)
+
+    elif choice == "Cari Pelanggan":
+        st.subheader("Cari Pelanggan")
+        nama_pelanggan = st.text_input("Nama Pelanggan")
+        if st.button("Cari"):
+            cari_pelanggan(nama_pelanggan)
+
+    elif choice == "Cari Mobil":
+        st.subheader("Cari Mobil")
+        nama_mobil = st.text_input("Nama Mobil")
+        if st.button("Cari"):
+            cari_mobil(nama_mobil)
 
 if __name__ == "__main__":
     main()
