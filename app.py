@@ -194,14 +194,14 @@ def main():
             cari_pelanggan_by_name(nama_pelanggan)
 
     elif choice == "Ganti Mobil Penyewa":
-    st.subheader("Ganti Mobil Penyewa")
-    # Pilihan pelanggan dari daftar yang ada
-    pelanggan_df = pd.read_csv('data_pelanggan.csv')
-    pilihan_pelanggan = st.selectbox("Pilih Pelanggan", pelanggan_df['Nama Pelanggan'].unique())
+        st.subheader("Ganti Mobil Penyewa")
+        # Pilihan pelanggan dari daftar yang ada
+        pelanggan_df = pd.read_csv('data_pelanggan.csv')
+        pilihan_pelanggan = st.selectbox("Pilih Pelanggan", pelanggan_df['Nama Pelanggan'].unique())
 
-    # Pilihan mobil pengganti dari daftar mobil yang tersedia
-    mobil_df = pd.read_csv('data_mobil.csv')
-    pilihan_mobil_pengganti = st.selectbox("Pilih Mobil Pengganti", mobil_df['Nama Mobil'].unique())
+        # Pilihan mobil pengganti dari daftar mobil yang tersedia
+        mobil_df = pd.read_csv('data_mobil.csv')
+        pilihan_mobil_pengganti = st.selectbox("Pilih Mobil Pengganti", mobil_df['Nama Mobil'].unique())
 
     if st.button("Ganti Mobil"):
         id_pelanggan = pelanggan_df[pelanggan_df['Nama Pelanggan'] == pilihan_pelanggan]['ID Pelanggan'].values[0]
