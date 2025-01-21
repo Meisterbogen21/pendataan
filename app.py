@@ -48,10 +48,12 @@ if menu == "Daftarkan Penyewa":
             'Tanggal_Mulai': [tanggal_mulai],
             'Tanggal_Selesai': [tanggal_selesai]
         })
+        global penyewa_data
         penyewa_data = pd.concat([penyewa_data, new_penyewa], ignore_index=True)
 
         st.success("Penyewaan berhasil ditambahkan!")
-
+     
+        
 if menu == "Daftarkan Mobil Baru":
     st.header("Daftarkan Mobil Baru")
     id_mobil = st.text_input("ID Mobil")
@@ -72,6 +74,7 @@ if menu == "Daftarkan Mobil Baru":
             'Harga_Sewa': [harga_sewa],
             'Status': [status]
         })
+        global mobil_data
         mobil_data = pd.concat([mobil_data, new_mobil], ignore_index=True)
         st.success("Mobil berhasil ditambahkan!")
 
