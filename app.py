@@ -191,12 +191,11 @@ def selesaikan_pesanan(nama_pelanggan):
 
     # Konfirmasi penyelesaian pesanan
     if st.button("Selesaikan Pesanan"):
-        # Update status mobil menjadi 'Tersedia'
         mobil_df.loc[mobil_df['Nama Mobil'] == mobil_disewa, 'Status'] = 'Tersedia'
-        pelanggan_df = pelanggan_df[pelanggan_df['ID Pelanggan'] != id_pelanggan]  # Hapus data pelanggan
+        pelanggan_df = pelanggan_df[pelanggan_df['ID Pelanggan'] != id_pelanggan]  # Hapus pelanggan dari daftar
         mobil_df.to_csv('data_mobil.csv', index=False)
         pelanggan_df.to_csv('data_pelanggan.csv', index=False)
-        st.success("Pesanan berhasil diselesaikan!")
+        st.success(f"Pesanan {nama_pelanggan} berhasil diselesaikan dan mobil telah dikembalikan!")
 
 # Menjalankan aplikasi Streamlit
 def main():
@@ -213,7 +212,7 @@ def main():
     elif choice == "Daftar Mobil":
         st.subheader("Formulir Daftar Mobil")
         nama_mobil = st.text_input("Nama Mobil")
-        tipe_mobil = st.text_input("Tipe Mobil")
+        tipe_mobil = st.selectbox("Tipe Mobil", ["SUV", "MPV", "Sedan", "Hatchback", "Coupe", "Convertible"])
         harga_sewa = st.number_input("Harga Sewa", min_value=100000, step=1000)
         transmisi = st.selectbox("Transmisi", ["Manual", "Automatic"])
         jumlah_penumpang = st.number_input("Jumlah Penumpang", min_value=1)
