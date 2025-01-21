@@ -31,7 +31,7 @@ def create_csv_if_not_exists():
         }
         pelanggan_df = pd.DataFrame(pelanggan_data)
         pelanggan_df.to_csv('data_pelanggan.csv', index=False)
-
+        pelanggan_df.astype({'No Telepon':int})
 # Fungsi untuk menampilkan data mobil
 def tampilkan_data_mobil():
     mobil_df = pd.read_csv('data_mobil.csv')
