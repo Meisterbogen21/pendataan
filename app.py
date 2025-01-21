@@ -214,8 +214,8 @@ def main():
     elif choice == "Tabel Pelanggan":
         tampilkan_data_pelanggan()
 
-    elif choice == "Ganti Mobil Penyewa":
-        st.subheader("Ganti Mobil Penyewa")
+    elif choice == "Ganti Mobil":
+        st.subheader("Ganti Mobil")
         pelanggan_df = pd.read_csv('data_pelanggan.csv')
         pilihan_pelanggan = st.selectbox("Pilih Pelanggan", pelanggan_df['Nama Pelanggan'].unique())
         pilihan_mobil_baru = st.selectbox("Pilih Mobil Pengganti", ["Toyota Avanza", "Honda Civic", "Isuzu Panther", "Mitsubishi Pajero", "Daihatsu Xenia", "Suzuki Swift", "Nissan X-Trail", "Hyundai Elantra", "Ford Ranger", "Chevrolet Trax"])
