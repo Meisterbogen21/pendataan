@@ -15,10 +15,6 @@ def load_data(url):
 mobil_data = load_data(mobil_url)
 penyewa_data = load_data(penyewa_url)
 
-# Pastikan dataset memiliki kolom 'Status'
-if 'Status' not in mobil_data.columns:
-    mobil_data['Status'] = 'Tersedia'  # Set status default ke 'Tersedia'
-
 # Initialize Streamlit app
 st.title("Sistem Pendataan Sewa Mobil")
 
@@ -34,41 +30,22 @@ menu = st.sidebar.selectbox("Pilih Menu", [
 
 if menu == "Daftarkan Penyewa":
     st.header("Daftarkan Penyewa Baru")
-    id_pelanggan = st.text_input("ID Penyewa")
-    nama = st.text_input("Nama Penyewa")
-    alamat = st.text_input("Alamat")
-    no_telepon = st.text_input("No Telepon")
-    email = st.text_input("Email")
+    pilihan_mobil = st.selectbox("Pilih Mobil", mobil_data['ID_Mobil'] + " - " + mobil_data['Merk'] + " " + mobil_data['Model'])
+    tanggal_mulai = st.date_input("Tanggal Mulai Penyewaan")
+    tanggal_selesai = st.date_input("Tanggal Selesai Penyewaan")
 
-    # Filter mobil yang tersedia
-    mobil_tersedia = mobil_data[mobil_data['Status'] == 'Tersedia']
-    if mobil_tersedia.empty:
-        st.warning("Tidak ada mobil yang tersedia untuk disewa saat ini.")
-    else:
-        pilihan_mobil = st.selectbox("Pilih Mobil", mobil_tersedia['ID_Mobil'] + " - " + mobil_tersedia['Merk'] + " " + mobil_tersedia['Model'])
-        tanggal_mulai = st.date_input("Tanggal Mulai Penyewaan")
-        tanggal_selesai = st.date_input("Tanggal Selesai Penyewaan")
+    if st.button("Simpan Penyewaan"):
+        selected_mobil_id = pilihan_mobil.split(" - ")[0]
 
-        if st.button("Simpan Penyewa"):
-            selected_mobil_id = pilihan_mobil.split(" - ")[0]
+        # Tambahkan data penyewa baru
+        new_penyewa = pd.DataFrame({
+            'ID_Mobil': [selected_mobil_id],
+            'Tanggal_Mulai': [tanggal_mulai],
+            'Tanggal_Selesai': [tanggal_selesai]
+        })
+        penyewa_data = pd.concat([penyewa_data, new_penyewa], ignore_index=True)
 
-            # Tambahkan data penyewa baru
-            new_penyewa = pd.DataFrame({
-                'ID_Penyewa': [id_pelanggan],
-                'Nama': [nama],
-                'Alamat': [alamat],
-                'No_Telepon': [no_telepon],
-                'Email': [email],
-                'ID_Mobil': [selected_mobil_id],
-                'Tanggal_Mulai': [tanggal_mulai],
-                'Tanggal_Selesai': [tanggal_selesai]
-            })
-            penyewa_data = pd.concat([penyewa_data, new_penyewa], ignore_index=True)
-
-            # Update status mobil menjadi "Disewa"
-            mobil_data.loc[mobil_data['ID_Mobil'] == selected_mobil_id, 'Status'] = 'Disewa'
-
-            st.success("Penyewa berhasil ditambahkan dan mobil diperbarui menjadi status 'Disewa'!")
+        st.success("Penyewaan berhasil ditambahkan!")
 
 if menu == "Daftarkan Mobil Baru":
     st.header("Daftarkan Mobil Baru")
