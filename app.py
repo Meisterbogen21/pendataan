@@ -203,3 +203,6 @@ def main():
         if st.button("Ganti Mobil"):
             id_pelanggan = pelanggan_df[pelanggan_df['Nama Pelanggan'] == pilihan_pelanggan]['ID Pelanggan'].values[0]
             ganti_mobil_penyewa(id_pelanggan, pilihan_mobil_pengganti)
+
+if __name__ == "__main__":
+    main()
