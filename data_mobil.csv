@@ -1,9 +1,11 @@
-ID Mobil,Nama Mobil,Tipe Mobil,Harga Sewa
-1,Toyota Avanza,MPV,300000
-2,Honda Civic,Sedan,500000
-3,Isuzu Panther,MPV,350000
-4,Mitsubishi Pajero,4x4,700000
-5,Daihatsu Xenia,MPV,320000
-6,Suzuki Swift,Hatchback,250000
-7,Nissan X-Trail,SUV,600000
-8,Hyundai Elantra,Sedan,450000
+ID Mobil,Nama Mobil,Tipe Mobil,Harga Sewa,Transmisi,Jumlah Penumpang,Fitur Tambahan
+1,Toyota Avanza,MPV,300000,Manual,7,AC, Power Steering
+2,Honda Civic,Sedan,500000,Automatic,5,Sunroof, Leather Seats
+3,Isuzu Panther,MPV,350000,Manual,7,AC, Power Windows, GPS
+4,Mitsubishi Pajero,4x4,700000,Automatic,7,Sunroof, Leather Seats, GPS
+5,Daihatsu Xenia,MPV,320000,Manual,7,AC, Power Windows
+6,Suzuki Swift,Hatchback,250000,Manual,5,AC, Power Steering
+7,Nissan X-Trail,SUV,600000,Automatic,5,Leather Seats, GPS, AC
+8,Hyundai Elantra,Sedan,450000,Automatic,5,Sunroof, Leather Seats, Power Windows
+9,Ford Ranger,Pickup,800000,Manual,4,AC, Power Steering, Off-road Tires
+10,Chevrolet Trax,SUV,550000,Automatic,5,AC, Power Windows, GPS, Leather Seats
