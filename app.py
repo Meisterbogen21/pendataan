@@ -35,7 +35,7 @@ if menu == "Daftarkan Penyewa":
     alamat = st.text_input("Alamat")
     no_telepon = st.text_input("No Telepon")
     email = st.text_input("Email")
-    pilihan_mobil = st.selectbox("Pilih Mobil", mobil_data['nama_mobil'] + " - " + mobil_data['merek_mobil'] + " " + mobil_data['transmisi'])
+    pilihan_mobil = st.selectbox("Pilih Mobil", mobil_data['nama_mobil'] + " - " + mobil_data['transmisi'] + " - " + mobil_data['tipe_mobil'])
     tanggal_mulai = st.date_input("Tanggal Mulai Penyewaan")
     tanggal_selesai = st.date_input("Tanggal Selesai Penyewaan")
 
